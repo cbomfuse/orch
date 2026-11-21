@@ -1,7 +1,7 @@
-"""CBOM-Lens: the built-in spec (a config file written by `files:`, the local launcher via `go install`, the
-CBOM on stdout), its self-identification in metadata.component, and the golden CBOM of its own test-suite
-through normalisation, evaluation and the 2CBOM export.  `go` and cbom-lens are stand-ins here (no network
-in CI); the CBOM is CBOM-Lens's own output."""
+"""CBOM-Lens: the built-in spec (a config file written by `files:`, the local launcher building a checkout of
+the release commit with `go build`, the CBOM on stdout), its self-identification in metadata.component, and
+the golden CBOM of its own test-suite through normalisation, evaluation and the 2CBOM export.  `git`, `go`
+and cbom-lens are stand-ins here (no network in CI); the CBOM is CBOM-Lens's own output."""
 import json
 import os
 import shutil
@@ -19,6 +19,7 @@ from orchestrator.tools import builtin_spec_dir, load_specs, make_adapter
 from orchestrator.tools.base import ToolVersion
 
 COMMIT = "862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b"      # tag 1.1.1
+REPO = "https://github.com/OmniTrustILM/cbom-lens"
 # internal/bom/testdata/golden/corpus-1.6.json of CBOM-Lens 1.1.1: certificates, keys, a CRL, a CSR,
 # gitleaks findings and a TLS endpoint
 GOLDEN = "cbom-lens-golden-cdx16.json"
@@ -35,12 +36,15 @@ def test_spec_and_config():
     assert spec.launcher == "local" and spec.capture_stdout and spec.format == "cyclonedx"
     cfg = yaml.safe_load(spec.files["cbom-lens.yaml"])
     assert cfg["service"] == {"mode": "manual", "log": "stderr"}    # no dir or repository: the CBOM goes to stdout
-    assert cfg["filesystem"] == {"enabled": True, "paths": []}       # the working directory, i.e. the workspace
+    assert cfg["filesystem"] == {"enabled": True, "paths": ["{workdir}"]}   # the case workspace, named explicitly
     assert cfg["cbom"] == {"version": "1.6"}
     assert not {"containers", "ports", "registry"} & set(cfg)        # off unless configured
     assert spec.local["env"]["CBOMLENSCONFIG"] == spec.local["command"][-1]   # the variable beats --config
     assert spec.supports(Case("Rust", "Rust", Path("."), Path("gt"), None, "main.rs"))
     assert spec.twocbom["detection_method"] == "static-binary"
+    # go.mod of 1.1.1 has exclude directives, which `go install module@version` refuses: build a checkout
+    assert not any(step[:2] == ["go", "install"] for step in spec.local["install"])
+    assert spec.local["install"][-1][:2] == ["go", "build"] and "GOBIN" not in spec.local["env"]
 
 
 def test_golden_cbom_normalises(fixtures):
@@ -69,14 +73,26 @@ def test_reported_tool_from_metadata_component(fixtures):
 FAKE_GO = """#!{python}
 import json, os, shutil, sys
 args = sys.argv[1:]
-keys = ("GOBIN", "GOPATH", "GOCACHE", "GOFLAGS", "GOTOOLCHAIN", "CGO_ENABLED", "CBOMLENSCONFIG")
-with open(os.environ["FAKE_GO_LOG"], "a") as fh:
-    fh.write(json.dumps({{"argv": args, "env": {{k: os.environ.get(k) for k in keys}}}}) + "\\n")
-if args[0] == "install":
-    os.makedirs(os.environ["GOBIN"], exist_ok=True)            # go install creates GOBIN
-    exe = os.path.join(os.environ["GOBIN"], "cbom-lens")
+keys = ("GOPATH", "GOCACHE", "GOFLAGS", "GOTOOLCHAIN", "CGO_ENABLED", "CBOMLENSCONFIG")
+with open(os.environ["FAKE_LOG"], "a") as fh:
+    fh.write(json.dumps({{"go": args, "env": {{k: os.environ.get(k) for k in keys}}}}) + "\\n")
+if args[0] == "build":
+    src, out = args[args.index("-C") + 1], args[args.index("-o") + 1]
+    assert os.path.isdir(os.path.join(src, ".git")), src          # builds the checkout
+    assert out.endswith("/"), out                                 # a directory: cbom-lens(.exe) inside
+    os.makedirs(out, exist_ok=True)
+    exe = os.path.join(out, "cbom-lens")
     shutil.copy({lens!r}, exe)
     os.chmod(exe, 0o755)
+"""
+
+FAKE_GIT = """#!{python}
+import json, os, sys
+args = sys.argv[1:]
+with open(os.environ["FAKE_LOG"], "a") as fh:
+    fh.write(json.dumps({{"git": args}}) + "\\n")
+if args[0] == "init":
+    os.makedirs(os.path.join(args[-1], ".git"), exist_ok=True)
 """
 
 FAKE_LENS = """#!{python}
@@ -89,8 +105,10 @@ if args == ["version"]:
     sys.exit(0)
 assert args[:2] == ["run", "--config"], args
 cfg = yaml.safe_load(open(os.environ.get("CBOMLENSCONFIG") or args[2]))     # cmd/cbom-lens: the variable wins
-assert cfg["service"]["mode"] == "manual" and cfg["filesystem"] == {{"enabled": True, "paths": []}}, cfg
-assert os.path.isfile("crypto_showcase.py")                     # paths: [] scans the working directory
+assert cfg["service"]["mode"] == "manual" and cfg["filesystem"]["enabled"], cfg
+(root,) = cfg["filesystem"]["paths"]
+assert os.path.isabs(root) and os.path.samefile(root, os.getcwd()), (root, os.getcwd())   # the case workspace
+assert os.path.isfile(os.path.join(root, "crypto_showcase.py"))
 sys.stderr.write(json.dumps({{"level": "INFO", "msg": "scan finished"}}) + "\\n")
 sys.stdout.write(open({golden!r}).read())
 """
@@ -108,8 +126,9 @@ def test_local_install_and_run(tmp_path, fixtures, monkeypatch):
     fake_bin.mkdir()
     lens = _executable(tmp_path / "cbom-lens.py", FAKE_LENS.format(python=sys.executable, golden=str(fixtures / "cboms" / GOLDEN)))
     _executable(fake_bin / "go", FAKE_GO.format(python=sys.executable, lens=str(lens)))
-    go_log = tmp_path / "go.log"
-    monkeypatch.setenv("FAKE_GO_LOG", str(go_log))
+    _executable(fake_bin / "git", FAKE_GIT.format(python=sys.executable))
+    calls_log = tmp_path / "calls.log"
+    monkeypatch.setenv("FAKE_LOG", str(calls_log))
     monkeypatch.setenv("PATH", f"{fake_bin}{os.pathsep}{os.environ['PATH']}")
 
     config = Config.defaults(tmp_path)
@@ -119,12 +138,17 @@ def test_local_install_and_run(tmp_path, fixtures, monkeypatch):
 
     cache = config.path("tools", "cache_dir") / "cbom-lens"
     conf = cache / "files" / "cbom-lens.yaml"
-    (install,) = [json.loads(line) for line in go_log.read_text().splitlines()]
-    assert install["argv"] == ["install", "-ldflags=-X main.version=1.1.1",
-                               f"github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@{COMMIT}"]
-    assert install["env"] == {"GOBIN": str(cache / "1.1.1" / "bin"), "GOPATH": str(cache / "go"),
-                              "GOCACHE": str(cache / "go-build"), "GOFLAGS": "-modcacherw", "GOTOOLCHAIN": "auto",
-                              "CGO_ENABLED": "0", "CBOMLENSCONFIG": str(conf)}
+    src = f"{cache}/1.1.1/src"
+    calls = [json.loads(line) for line in calls_log.read_text().splitlines()]
+    assert [c.get("git") or ["go"] + c["go"] for c in calls] == [
+        ["init", "--quiet", src],
+        ["-C", src, "fetch", "--quiet", "--depth", "1", REPO, COMMIT],
+        ["-C", src, "checkout", "--quiet", "--force", "--detach", "FETCH_HEAD"],
+        ["go", "build", "-C", src, "-trimpath", "-ldflags=-s -w -X main.version=1.1.1", "-o", f"{cache}/1.1.1/bin/",
+         "./cmd/cbom-lens"],
+    ]
+    assert calls[-1]["env"] == {"GOPATH": str(cache / "go"), "GOCACHE": str(cache / "go-build"), "GOFLAGS": "-modcacherw",
+                                "GOTOOLCHAIN": "auto", "CGO_ENABLED": "0", "CBOMLENSCONFIG": str(conf)}
     assert version.components["check"].startswith("cbom-lens: 1.1.1")
 
     work = tmp_path / "work"
@@ -132,7 +156,7 @@ def test_local_install_and_run(tmp_path, fixtures, monkeypatch):
     res = adapter.run(_case(fixtures), work, version, tmp_path / "raw", tmp_path / "run.log")
     assert res.status == "ok", res.notes
     assert res.command == [str(cache / "1.1.1" / "bin" / "cbom-lens"), "run", "--config", str(conf)]
-    assert conf.read_text() == load_specs(config)["cbom-lens"].files["cbom-lens.yaml"]
+    assert conf.read_text() == load_specs(config)["cbom-lens"].files["cbom-lens.yaml"].replace("{workdir}", str(work))
     assert res.output_path.read_bytes() == (fixtures / "cboms" / GOLDEN).read_bytes()
     log = (tmp_path / "run.log").read_text(encoding="utf-8")
     assert "--- stdout -> " in log and "scan finished" in log and "www.ssllabs.com" not in log

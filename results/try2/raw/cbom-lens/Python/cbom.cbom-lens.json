@@ -1,0 +1,52 @@
+{
+  "$schema": "https://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:d16ae473-26fd-43bb-bd38-d61796e8038b",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-11-21T02:51:50Z",
+    "lifecycles": [
+      {
+        "phase": "operations"
+      }
+    ],
+    "component": {
+      "type": "application",
+      "manufacturer": {
+        "name": "OmniTrust",
+        "address": {},
+        "url": [
+          "https://www.omnitrust.com"
+        ]
+      },
+      "name": "CBOM-Lens",
+      "version": "v0.0.0-20261018171350-862a35d5fa25"
+    },
+    "properties": [
+      {
+        "name": "cbom_lens_files_errors",
+        "value": "0"
+      },
+      {
+        "name": "cbom_lens_files_excluded",
+        "value": "0"
+      },
+      {
+        "name": "cbom_lens_files_total",
+        "value": "4"
+      },
+      {
+        "name": "cbom_lens_sources_errors",
+        "value": "0"
+      },
+      {
+        "name": "cbom_lens_sources_total",
+        "value": "1"
+      }
+    ]
+  },
+  "components": [],
+  "dependencies": [],
+  "properties": []
+}

@@ -1,0 +1,172 @@
+$ git init --quiet /home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/src
+# cwd=/home/amin/workspace/orch/.orchestrator/cache/cbom-lens exit=0 timed_out=False duration=0.00s
+
+$ git -C /home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/src fetch --quiet --depth 1 https://github.com/OmniTrustILM/cbom-lens 862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b
+# cwd=/home/amin/workspace/orch/.orchestrator/cache/cbom-lens exit=0 timed_out=False duration=1.10s
+
+$ git -C /home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/src checkout --quiet --force --detach FETCH_HEAD
+# cwd=/home/amin/workspace/orch/.orchestrator/cache/cbom-lens exit=0 timed_out=False duration=0.02s
+
+$ go build -C /home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/src -trimpath '-ldflags=-s -w -X main.version=1.1.1' -o /home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/bin/ ./cmd/cbom-lens
+# cwd=/home/amin/workspace/orch/.orchestrator/cache/cbom-lens exit=0 timed_out=False duration=82.10s
+--- stderr ---
+go: downloading go1.26.9 (linux/amd64)
+go: downloading github.com/spf13/cobra v1.10.2
+go: downloading golang.org/x/sync v0.24.0
+go: downloading gopkg.in/yaml.v3 v3.0.1
+go: downloading github.com/zricethezav/gitleaks/v8 v8.30.1
+go: downloading github.com/anchore/stereoscope v0.3.0
+go: downloading github.com/moby/moby/client v0.5.1
+go: downloading github.com/go-co-op/gocron/v2 v2.22.0
+go: downloading golang.org/x/crypto v0.58.0
+go: downloading github.com/pavlo-v-chernykh/keystore-go/v4 v4.5.0
+go: downloading github.com/smallstep/pkcs7 v0.2.3
+go: downloading software.sslmate.com/src/go-pkcs12 v0.7.4
+go: downloading github.com/CycloneDX/cyclonedx-go v0.12.0
+go: downloading github.com/google/uuid v1.6.0
+go: downloading github.com/kaptinlin/jsonschema v0.9.8
+go: downloading github.com/Ullaakut/nmap/v4 v4.0.1
+go: downloading github.com/gorilla/mux v1.8.1
+go: downloading go.yaml.in/yaml/v4 v4.0.0-rc.6
+go: downloading cuelang.org/go v0.17.1
+go: downloading github.com/creasty/defaults v1.11.0
+go: downloading github.com/robfig/cron/v3 v3.0.1
+go: downloading modernc.org/sqlite v1.60.1
+go: downloading github.com/anchore/go-collections v0.1.1
+go: downloading github.com/anchore/go-logger v0.1.1
+go: downloading github.com/wagoodman/go-partybus v0.0.0-20230516145632-8ccac152c651
+go: downloading github.com/becheran/wildmatch-go v1.0.0
+go: downloading github.com/bmatcuk/doublestar/v4 v4.10.0
+go: downloading github.com/scylladb/go-set v1.0.3-0.20200225121959-cc7b2070d91e
+go: downloading github.com/gabriel-vasile/mimetype v1.4.13
+go: downloading github.com/spf13/afero v1.15.0
+go: downloading github.com/sylabs/squashfs v1.0.6
+go: downloading github.com/containerd/errdefs v1.0.0
+go: downloading github.com/docker/go-connections v0.8.1
+go: downloading github.com/google/go-containerregistry v0.21.7
+go: downloading github.com/wagoodman/go-progress v0.0.0-20260303201901-10176f79b2c0
+go: downloading github.com/jonboulle/clockwork v0.5.0
+go: downloading github.com/spf13/pflag v1.0.10
+go: downloading github.com/containerd/errdefs/pkg v0.3.0
+go: downloading github.com/distribution/reference v0.6.0
+go: downloading github.com/moby/moby/api v1.55.0
+go: downloading github.com/opencontainers/go-digest v1.0.0
+go: downloading github.com/opencontainers/image-spec v1.1.1
+go: downloading go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0
+go: downloading go.opentelemetry.io/otel/trace v1.44.0
+go: downloading github.com/BobuSumisu/aho-corasick v1.0.3
+go: downloading github.com/charmbracelet/lipgloss v1.1.0
+go: downloading github.com/fatih/semgroup v1.3.0
+go: downloading github.com/spf13/viper v1.21.0
+go: downloading github.com/rs/zerolog v1.34.0
+go: downloading golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90
+go: downloading github.com/adrg/xdg v0.5.3
+go: downloading github.com/containerd/containerd/v2 v2.3.6
+go: downloading go.opentelemetry.io/otel v1.44.0
+go: downloading github.com/containerd/platforms v1.0.0-rc.5
+go: downloading github.com/docker/cli v29.6.1+incompatible
+go: downloading github.com/sylabs/sif/v2 v2.24.1
+go: downloading github.com/go-json-experiment/json v0.0.0-20260623181947-01eb4420fa68
+go: downloading github.com/goccy/go-yaml v1.19.2
+go: downloading github.com/kaptinlin/jsonpointer v0.4.28
+go: downloading github.com/mattn/go-isatty v0.0.24
+go: downloading golang.org/x/text v0.43.0
+go: downloading github.com/cockroachdb/apd/v3 v3.2.3
+go: downloading github.com/docker/go-units v0.5.0
+go: downloading github.com/moby/docker-image-spec v1.3.1
+go: downloading github.com/hashicorp/go-version v1.8.0
+go: downloading github.com/Masterminds/sprig/v3 v3.3.0
+go: downloading github.com/h2non/filetype v1.1.3
+go: downloading github.com/gitleaks/go-gitdiff v0.9.1
+go: downloading github.com/mholt/archives v0.1.5
+go: downloading github.com/felixge/httpsnoop v1.1.0
+go: downloading go.opentelemetry.io/otel/metric v1.44.0
+go: downloading github.com/charmbracelet/x/ansi v0.11.6
+go: downloading github.com/charmbracelet/x/cellbuf v0.0.15
+go: downloading github.com/muesli/termenv v0.16.0
+go: downloading github.com/rivo/uniseg v0.4.7
+go: downloading github.com/go-viper/mapstructure/v2 v2.5.0
+go: downloading github.com/sagikazarmark/locafero v0.12.0
+go: downloading github.com/fsnotify/fsnotify v1.9.0
+go: downloading github.com/spf13/cast v1.10.0
+go: downloading github.com/mattn/go-colorable v0.1.14
+go: downloading github.com/anchore/go-homedir v0.1.1
+go: downloading github.com/pelletier/go-toml/v2 v2.4.3
+go: downloading github.com/containerd/log v0.1.0
+go: downloading golang.org/x/sys v0.49.0
+go: downloading go.yaml.in/yaml/v3 v3.0.5
+go: downloading github.com/sirupsen/logrus v1.9.4
+go: downloading github.com/containerd/containerd/api v1.11.1
+go: downloading github.com/containerd/ttrpc v1.2.8
+go: downloading google.golang.org/grpc v1.84.0
+go: downloading github.com/klauspost/compress v1.18.7
+go: downloading github.com/moby/locker v1.0.1
+go: downloading github.com/containerd/fifo v1.1.0
+go: downloading github.com/containerd/plugin v1.1.0
+go: downloading github.com/containerd/typeurl/v2 v2.2.3
+go: downloading github.com/moby/sys/signal v0.7.1
+go: downloading github.com/opencontainers/runtime-spec v1.3.0
+go: downloading google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
+go: downloading github.com/go-logr/logr v1.4.3
+go: downloading dario.cat/mergo v1.0.2
+go: downloading github.com/Masterminds/goutils v1.1.1
+go: downloading github.com/Masterminds/semver/v3 v3.4.0
+go: downloading github.com/huandu/xstrings v1.5.0
+go: downloading github.com/mitchellh/copystructure v1.2.0
+go: downloading github.com/shopspring/decimal v1.4.0
+go: downloading github.com/subosito/gotenv v1.6.0
+go: downloading github.com/STARRY-S/zip v0.2.3
+go: downloading github.com/andybalholm/brotli v1.2.0
+go: downloading github.com/bodgit/sevenzip v1.6.1
+go: downloading github.com/dsnet/compress v0.0.2-0.20230904184137-39efe44ab707
+go: downloading github.com/klauspost/pgzip v1.2.6
+go: downloading github.com/mikelolasagasti/xz v1.0.1
+go: downloading github.com/minio/minlz v1.1.0
+go: downloading github.com/sorairolake/lzip-go v0.3.8
+go: downloading github.com/pierrec/lz4/v4 v4.1.26
+go: downloading github.com/nwaples/rardecode/v2 v2.2.2
+go: downloading github.com/ulikunitz/xz v0.5.15
+go: downloading github.com/therootcompany/xz v1.0.1
+go: downloading github.com/docker/docker-credential-helpers v0.9.5
+go: downloading github.com/charmbracelet/colorprofile v0.4.3
+go: downloading github.com/charmbracelet/x/term v0.2.2
+go: downloading github.com/mattn/go-runewidth v0.0.21
+go: downloading golang.org/x/net v0.61.0
+go: downloading github.com/clipperhouse/displaywidth v0.11.0
+go: downloading github.com/clipperhouse/uax29/v2 v2.7.0
+go: downloading github.com/lucasb-eyer/go-colorful v1.3.0
+go: downloading github.com/aymanbagabas/go-osc52/v2 v2.0.1
+go: downloading github.com/containerd/continuity v0.5.0
+go: downloading github.com/moby/sys/userns v0.1.0
+go: downloading github.com/moby/sys/mountinfo v0.7.2
+go: downloading github.com/moby/sys/user v0.4.1
+go: downloading google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800
+go: downloading github.com/gogo/protobuf v1.3.2
+go: downloading github.com/go-logr/stdr v1.2.2
+go: downloading go.opentelemetry.io/auto/sdk v1.2.1
+go: downloading github.com/cespare/xxhash/v2 v2.3.0
+go: downloading github.com/mitchellh/reflectwalk v1.0.2
+go: downloading github.com/bodgit/plumbing v1.3.0
+go: downloading github.com/bodgit/windows v1.0.1
+go: downloading go4.org v0.0.0-20260112195520-a5071408f32f
+go: downloading modernc.org/libc v1.77.1
+go: downloading github.com/emicklei/proto v1.14.3
+go: downloading github.com/protocolbuffers/txtpbfmt v0.0.0-20260420112717-c39628bde8b5
+go: downloading github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e
+go: downloading github.com/hashicorp/golang-lru/v2 v2.0.7
+go: downloading github.com/mitchellh/go-wordwrap v1.0.1
+go: downloading modernc.org/memory v1.12.1
+go: downloading github.com/dustin/go-humanize v1.0.1
+go: downloading modernc.org/mathutil v1.7.1
+go: downloading github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec
+
+$ /home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/bin/cbom-lens version
+# cwd=/home/amin/workspace/orch/.orchestrator/cache/cbom-lens exit=0 timed_out=False duration=0.01s
+--- stdout ---
+cbom-lens: 1.1.1
+go:     go1.26.9
+commit: 862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b
+date:   2026-10-18T17:13:50Z
+dirty:  false
+
+

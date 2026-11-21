@@ -20,8 +20,9 @@
   Docker-only tool (`cbomkit`) or a local-only one (`cryptoscan`) keeps its own.
 - Lexicon: `SHAKE` without a size is SHA-3 (XOF), and `ECC` is the generic elliptic-curve family, like `EC`.
 - New built-in tool `cbom-lens` (OmniTrust CBOM-Lens), enabled by default as the sixth generator: built
-  with `go install`, run as `run --config` on a config written per run, CBOM 1.6 from stdout; exported to
-  2CBOM as `static-binary`.
+  with `go build` from a shallow checkout of the release commit (its `go.mod` has `exclude` directives,
+  which `go install module@version` rejects), run as `run --config` on a config written per run that
+  names the case workspace, CBOM 1.6 from stdout; exported to 2CBOM as `static-binary`.
 - Tool specs: `files:` writes config files (placeholders rendered) to `{files}` before each run.
 - The self-reported tool comes from `metadata.component` when `metadata.tools` is empty and the
   component's name is one of the tool's aliases (CBOM-Lens identifies itself that way).

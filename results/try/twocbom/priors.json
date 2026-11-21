@@ -1,0 +1,167 @@
+{
+ "schemaVersion": "1.0",
+ "scoringModelVersion": "1.0",
+ "orchestrator": {
+  "version": "0.1.0"
+ },
+ "run": {
+  "id": "try",
+  "startedAt": "2026-11-21T02:41:37Z",
+  "finishedAt": "2026-11-21T02:41:56Z",
+  "host": {
+   "hostname": "msi",
+   "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+   "python": "3.12.3",
+   "orchestrator": "0.1.0"
+  },
+  "config": {
+   "scoring": {
+    "weights": {
+     "recall": 0.35,
+     "precision": 0.15,
+     "completeness": 0.15,
+     "correctness": 0.25,
+     "locality": 0.1
+    },
+    "line_tolerance": 1,
+    "min_support": 5,
+    "min_support_head_to_head": 3,
+    "strength_threshold": 0.8,
+    "strength_min_support": 5,
+    "treat_failed_as_zero": false,
+    "undecided_below": 0.6,
+    "backoff_relevance_decay": 0.15,
+    "shrinkage_prior_weight": 5,
+    "attribute_weights": {}
+   }
+  }
+ },
+ "baseline": {
+  "repo": "https://github.com/cbomfuse/baseline.git",
+  "ref": "main",
+  "commit": "ffd18edf8d55d9df8205d142191b570982d2f60f",
+  "describe": "ffd18ed",
+  "path": "/home/amin/workspace/orch/.orchestrator/baseline",
+  "synced": true,
+  "notes": [],
+  "evaluatedCommit": "ffd18edf8d55d9df8205d142191b570982d2f60f",
+  "evaluatedDescribe": "ffd18ed",
+  "evaluatedAt": "2026-11-21T02:41:56Z"
+ },
+ "cases": [
+  {
+   "id": "Python",
+   "language": "Python",
+   "dir": "/home/amin/workspace/orch/.orchestrator/baseline/Python",
+   "groundTruth": "/home/amin/workspace/orch/.orchestrator/baseline/Python/ground-truth.json",
+   "referenceCbom": "/home/amin/workspace/orch/.orchestrator/baseline/Python/cbom.cdx.json",
+   "sourceFile": "crypto_showcase.py",
+   "stats": {
+    "language": "Python",
+    "file": "crypto_showcase.py",
+    "assets": 90,
+    "byType": {
+     "algorithm": 33,
+     "certificate": 1,
+     "protocol": 1,
+     "related-crypto-material": 49,
+     "library": 6
+    },
+    "occurrences": 195,
+    "nonAssetMentions": 164,
+    "generated": "2026-10-29T17:09:05Z"
+   }
+  }
+ ],
+ "tools": {
+  "cbom-lens": {
+   "tool": "cbom-lens",
+   "name": "CBOM-Lens",
+   "repo": "https://github.com/OmniTrustILM/cbom-lens",
+   "strategy": "release",
+   "tag": "1.1.1",
+   "version": "1.1.1",
+   "commit": "862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b",
+   "resolved_at": "2026-11-21T02:41:37Z",
+   "source": "api",
+   "url": "https://github.com/OmniTrustILM/cbom-lens/releases/tag/1.1.1",
+   "launcher": "local",
+   "image": null,
+   "image_digest": null,
+   "image_id": null,
+   "reported": null,
+   "components": {
+    "error": "install"
+   },
+   "notes": [
+    "release 1.1.1 published 2026-10-19T15:49:12Z",
+    "install failed: cbom-lens: install step failed: go install -ldflags=-X main.version=1.1.1 github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b\nexit=1 timed_out=False duration=17.8s\ngo: downloading github.com/OmniTrustILM/cbom-lens v0.0.0-20261018171350-862a35d5fa25\ngo: github.com/OmniTrustILM/cbom-lens@v0.0.0-20261018171350-862a35d5fa25 requires go >= 1.26.9; switching to go1.26.11\ngo: downloading go1.26.11 (linux/amd64)\ngo: github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b (in github.com/OmniTrustILM/cbom-lens@v0.0.0-20261018171350-862a35d5fa25):\n\tThe go.mod file for the module providing named packages contains one or\n\tmore exclude directives. It must not contain directives that would cause\n\tit to be interpreted differently than if it were the main module.\n"
+   ],
+   "twocbom": {
+    "aliases": [
+     "cbom-lens",
+     "cbom lens",
+     "cbomlens",
+     "omnitrust cbom-lens",
+     "OmniTrustILM/cbom-lens"
+    ],
+    "detection_method": "static-binary"
+   },
+   "description": "Certificates, keys, secrets and their algorithms in filesystems, container images and on network ports (OmniTrust ILM).  It does not analyse source code, so on a source corpus it can only find embedded key material and credentials; read its scores per asset type.",
+   "languages": [
+    "*"
+   ]
+  }
+ },
+ "coverage": {
+  "cbom-lens": {
+   "Python": "install-failed"
+  }
+ },
+ "scores": {
+  "cbom-lens": {
+   "overall": {
+    "support": 0,
+    "detected": 0,
+    "exact": 0,
+    "truePositives": 0,
+    "falsePositives": 0,
+    "lexicalFalsePositives": 0,
+    "identity": null,
+    "recall": null,
+    "recallInterval": [
+     0.0,
+     1.0
+    ],
+    "precision": null,
+    "completeness": null,
+    "correctness": null,
+    "locality": null,
+    "score": null,
+    "scoreShrunk": null,
+    "attributes": {}
+   },
+   "byCategory": {},
+   "strengths": [],
+   "coverage": {
+    "Python": "install-failed"
+   }
+  }
+ },
+ "pairwise": {},
+ "summary": {
+  "cbom-lens": {
+   "support": 0,
+   "detected": 0,
+   "recall": null,
+   "precision": null,
+   "completeness": null,
+   "correctness": null,
+   "locality": null,
+   "score": null,
+   "falsePositives": 0,
+   "lexicalFalsePositives": 0
+  }
+ },
+ "ledgerIncluded": false
+}

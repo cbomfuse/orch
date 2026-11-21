@@ -1,0 +1,6 @@
+$ /home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/bin/cbom-lens run --config /home/amin/workspace/orch/.orchestrator/cache/cbom-lens/files/cbom-lens.yaml
+# cwd=/home/amin/workspace/orch/results/try2/work/cbom-lens/Python exit=0 timed_out=False duration=0.18s
+--- stdout -> /home/amin/workspace/orch/results/try2/work/cbom-lens/Python/cbom.cbom-lens.json (1115 bytes) ---
+--- stderr ---
+{"time":"2026-11-20T19:51:50.300899451-07:00","level":"WARN","msg":"command has no timeout","path":"/home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/bin/cbom-lens","cbom-lens":{"cmd":"run","pid":74384},"job":{"name":"/home/amin/workspace/orch/.orchestrator/cache/cbom-lens/files/cbom-lens.yaml","oneshot":true}}
+

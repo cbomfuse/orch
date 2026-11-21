@@ -7,7 +7,7 @@
 | Python ≥ 3.10, `git` | everything | `pip install -e .` installs the only dependency (PyYAML) |
 | Docker (or Podman with a `docker` shim) | `cbomkit`, `cdxgen`, `cbomkit-theia` (default launcher) | images are pulled by release tag; set `docker.pull_policy` |
 | Node.js ≥ 24 | `cdxgen` with `--launcher local` | installed into `.orchestrator/cache/cdxgen` via npm |
-| Go ≥ 1.21 | `cryptoscan`, `cbom-lens` (their only launcher); `cbomkit-theia` with `--launcher local` | built with `go install` into `.orchestrator/cache/<tool>/<version>`; `GOTOOLCHAIN=auto` fetches the Go release a tool's `go.mod` requires (1.26.9 for cbom-lens 1.1.1) |
+| Go ≥ 1.21 | `cryptoscan`, `cbom-lens` (their only launcher); `cbomkit-theia` with `--launcher local` | built into `.orchestrator/cache/<tool>/<version>` (`go install`; cbom-lens with `go build` from a checkout); `GOTOOLCHAIN=auto` fetches the Go release a tool's `go.mod` requires (1.26.9 for cbom-lens 1.1.1) |
 | ~1 GB disk, Python venv | `cryptobom-forge` | the CodeQL bundle (CLI + query packs) is downloaded once into `.orchestrator/cache/cryptobom-forge/codeql/<version>` |
 | `GITHUB_TOKEN` (optional) | version resolution | lifts the unauthenticated API limit; without it `git ls-remote` is used, which needs no token |
 
@@ -97,10 +97,15 @@ orchestrator run --tool cbomkit --case Java --run-id cbomkit-java --skip-install
   is CRITICAL, which `ok_exit_codes: [0, 1]` treats as success.  It is pattern-based and runs on every
   case.  Release 1.5.0 writes TLS findings as `algorithm` components rather than `protocol`, so its
   protocol recall is 0 until a release carries the fix already on its main branch.
-* **cbom-lens** — built with `go install github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@<commit>` (no
-  image is published), then `cbom-lens run --config .orchestrator/cache/cbom-lens/files/cbom-lens.yaml`
-  in the case workspace.  The config (`files:` in the spec) asks for a manual one-shot scan of the
-  working directory only, CBOM 1.6 on stdout (`capture_stdout`) and logs on stderr; containers, ports
+* **cbom-lens** — no image is published, and `go install …@<commit>` refuses the module because its
+  `go.mod` excludes dependency versions with known CVEs (`go install` rejects `exclude` and `replace`
+  directives).  The release is therefore built the way upstream builds it: a shallow `git` checkout of the
+  release commit in `.orchestrator/cache/cbom-lens/<version>/src`, then
+  `go build -trimpath -ldflags "-s -w -X main.version=<version>" ./cmd/cbom-lens`; a re-run reuses the
+  checkout.  It runs as `cbom-lens run --config .orchestrator/cache/cbom-lens/files/cbom-lens.yaml` in
+  the case workspace.  The config (`files:` in the spec) asks for a manual one-shot scan of the case
+  workspace only (named in `paths`, because cbom-lens reads a missing path list as the config file's
+  directory), CBOM 1.6 on stdout (`capture_stdout`) and logs on stderr; containers, ports
   and the registry stay off.  1.6 rather than 1.7 because 1.7 replaces the `…Ref` fields the
   normaliser reads with `relatedCryptographicAssets`.  Like cbomkit-theia it scans files, not source
   code.  CBOM-Lens names itself in `metadata.component`, which the orchestrator accepts as the

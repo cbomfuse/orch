@@ -1,0 +1,3623 @@
+{
+ "schemaVersion": "1.0",
+ "scoringModelVersion": "1.0",
+ "orchestrator": {
+  "version": "0.1.0"
+ },
+ "run": {
+  "id": "try",
+  "startedAt": "2026-11-21T02:41:37Z",
+  "finishedAt": "2026-11-21T02:41:56Z",
+  "host": {
+   "hostname": "msi",
+   "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+   "python": "3.12.3",
+   "orchestrator": "0.1.0"
+  },
+  "config": {
+   "scoring": {
+    "weights": {
+     "recall": 0.35,
+     "precision": 0.15,
+     "completeness": 0.15,
+     "correctness": 0.25,
+     "locality": 0.1
+    },
+    "line_tolerance": 1,
+    "min_support": 5,
+    "min_support_head_to_head": 3,
+    "strength_threshold": 0.8,
+    "strength_min_support": 5,
+    "treat_failed_as_zero": false,
+    "undecided_below": 0.6,
+    "backoff_relevance_decay": 0.15,
+    "shrinkage_prior_weight": 5,
+    "attribute_weights": {}
+   }
+  }
+ },
+ "baseline": {
+  "repo": "https://github.com/cbomfuse/baseline.git",
+  "ref": "main",
+  "commit": "ffd18edf8d55d9df8205d142191b570982d2f60f",
+  "describe": "ffd18ed",
+  "path": "/home/amin/workspace/orch/.orchestrator/baseline",
+  "synced": true,
+  "notes": [],
+  "evaluatedCommit": "ffd18edf8d55d9df8205d142191b570982d2f60f",
+  "evaluatedDescribe": "ffd18ed",
+  "evaluatedAt": "2026-11-21T02:41:56Z"
+ },
+ "cases": [
+  {
+   "id": "Python",
+   "language": "Python",
+   "dir": "/home/amin/workspace/orch/.orchestrator/baseline/Python",
+   "groundTruth": "/home/amin/workspace/orch/.orchestrator/baseline/Python/ground-truth.json",
+   "referenceCbom": "/home/amin/workspace/orch/.orchestrator/baseline/Python/cbom.cdx.json",
+   "sourceFile": "crypto_showcase.py",
+   "stats": {
+    "language": "Python",
+    "file": "crypto_showcase.py",
+    "assets": 90,
+    "byType": {
+     "algorithm": 33,
+     "certificate": 1,
+     "protocol": 1,
+     "related-crypto-material": 49,
+     "library": 6
+    },
+    "occurrences": 195,
+    "nonAssetMentions": 164,
+    "generated": "2026-10-29T17:09:05Z"
+   }
+  }
+ ],
+ "tools": {
+  "cbom-lens": {
+   "tool": "cbom-lens",
+   "name": "CBOM-Lens",
+   "repo": "https://github.com/OmniTrustILM/cbom-lens",
+   "strategy": "release",
+   "tag": "1.1.1",
+   "version": "1.1.1",
+   "commit": "862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b",
+   "resolved_at": "2026-11-21T02:41:37Z",
+   "source": "api",
+   "url": "https://github.com/OmniTrustILM/cbom-lens/releases/tag/1.1.1",
+   "launcher": "local",
+   "image": null,
+   "image_digest": null,
+   "image_id": null,
+   "reported": null,
+   "components": {
+    "error": "install"
+   },
+   "notes": [
+    "release 1.1.1 published 2026-10-19T15:49:12Z",
+    "install failed: cbom-lens: install step failed: go install -ldflags=-X main.version=1.1.1 github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b\nexit=1 timed_out=False duration=17.8s\ngo: downloading github.com/OmniTrustILM/cbom-lens v0.0.0-20261018171350-862a35d5fa25\ngo: github.com/OmniTrustILM/cbom-lens@v0.0.0-20261018171350-862a35d5fa25 requires go >= 1.26.9; switching to go1.26.11\ngo: downloading go1.26.11 (linux/amd64)\ngo: github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b (in github.com/OmniTrustILM/cbom-lens@v0.0.0-20261018171350-862a35d5fa25):\n\tThe go.mod file for the module providing named packages contains one or\n\tmore exclude directives. It must not contain directives that would cause\n\tit to be interpreted differently than if it were the main module.\n"
+   ],
+   "twocbom": {
+    "aliases": [
+     "cbom-lens",
+     "cbom lens",
+     "cbomlens",
+     "omnitrust cbom-lens",
+     "OmniTrustILM/cbom-lens"
+    ],
+    "detection_method": "static-binary"
+   },
+   "description": "Certificates, keys, secrets and their algorithms in filesystems, container images and on network ports (OmniTrust ILM).  It does not analyse source code, so on a source corpus it can only find embedded key material and credentials; read its scores per asset type.",
+   "languages": [
+    "*"
+   ]
+  }
+ },
+ "runs": [
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "startedAt": "2026-11-21T02:41:56Z",
+   "status": "install-failed",
+   "output": null,
+   "exitCode": null,
+   "durationSeconds": 0.0,
+   "log": null,
+   "notes": [
+    "install failed: cbom-lens: install step failed: go install -ldflags=-X main.version=1.1.1 github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b\nexit=1 timed_out=False duration=17.8s\ngo: downloading github.com/OmniTrustILM/cbom-lens v0.0.0-20261018171350-862a35d5fa25\ngo: github.com/OmniTrustILM/cbom-lens@v0.0.0-20261018171350-862a35d5fa25 requires go >= 1.26.9; switching to go1.26.11\ngo: downloading go1.26.11 (linux/amd64)\ngo: github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b (in github.com/OmniTrustILM/cbom-lens@v0.0.0-20261018171350-862a35d5fa25):\n\tThe go.mod file for the module providing named packages contains one or\n\tmore exclude directives. It must not contain directives that would cause\n\tit to be interpreted differently than if it were the main module.\n"
+   ],
+   "extra": {},
+   "finishedAt": "2026-11-21T02:41:56Z",
+   "evaluation": {
+    "status": "install-failed",
+    "scored": false,
+    "detections": 0,
+    "matchedDetections": 0,
+    "pairs": 0,
+    "unmatched": 0,
+    "unscored": 0,
+    "assets": 90,
+    "detectedAssets": 0,
+    "format": null,
+    "specVersion": null,
+    "reportedTool": null,
+    "warnings": []
+   }
+  }
+ ],
+ "coverage": {
+  "cbom-lens": {
+   "Python": "install-failed"
+  }
+ },
+ "scores": {
+  "cbom-lens": {
+   "overall": {
+    "support": 0,
+    "detected": 0,
+    "exact": 0,
+    "truePositives": 0,
+    "falsePositives": 0,
+    "lexicalFalsePositives": 0,
+    "identity": null,
+    "recall": null,
+    "recallInterval": [
+     0.0,
+     1.0
+    ],
+    "precision": null,
+    "completeness": null,
+    "correctness": null,
+    "locality": null,
+    "score": null,
+    "scoreShrunk": null,
+    "attributes": {}
+   },
+   "byCategory": {},
+   "strengths": [],
+   "coverage": {
+    "Python": "install-failed"
+   }
+  }
+ },
+ "pairwise": {},
+ "ledger": [
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "sha-256",
+   "name": "SHA-256",
+   "assetType": "algorithm",
+   "subtype": "hash",
+   "family": "sha2",
+   "scenarios": [
+    "S01",
+    "S05",
+    "S06",
+    "S07",
+    "S17",
+    "S18",
+    "S20",
+    "S23"
+   ],
+   "libraries": [
+    "lib.py-stdlib",
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 15,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "sha-384",
+   "name": "SHA-384",
+   "assetType": "algorithm",
+   "subtype": "hash",
+   "family": "sha2",
+   "scenarios": [],
+   "libraries": [],
+   "implicit": true,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": null,
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "sha-512",
+   "name": "SHA-512",
+   "assetType": "algorithm",
+   "subtype": "hash",
+   "family": "sha2",
+   "scenarios": [
+    "S02"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "sha3-256",
+   "name": "SHA3-256",
+   "assetType": "algorithm",
+   "subtype": "hash",
+   "family": "sha3",
+   "scenarios": [
+    "S02"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "blake2b-512",
+   "name": "BLAKE2b-512",
+   "assetType": "algorithm",
+   "subtype": "hash",
+   "family": "blake2",
+   "scenarios": [
+    "S02"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "md5",
+   "name": "MD5",
+   "assetType": "algorithm",
+   "subtype": "hash",
+   "family": "md5",
+   "scenarios": [
+    "S03"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "sha-1",
+   "name": "SHA-1",
+   "assetType": "algorithm",
+   "subtype": "hash",
+   "family": "sha1",
+   "scenarios": [
+    "S03"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "shake128",
+   "name": "SHAKE128",
+   "assetType": "algorithm",
+   "subtype": "xof",
+   "family": "sha3",
+   "scenarios": [
+    "S04"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "hmac-sha256",
+   "name": "HMAC-SHA256",
+   "assetType": "algorithm",
+   "subtype": "mac",
+   "family": "hmac",
+   "scenarios": [
+    "S05"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "hkdf-sha256",
+   "name": "HKDF-SHA256",
+   "assetType": "algorithm",
+   "subtype": "kdf",
+   "family": "hkdf",
+   "scenarios": [
+    "S06",
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 6,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "pbkdf2-hmac-sha256",
+   "name": "PBKDF2-HMAC-SHA256",
+   "assetType": "algorithm",
+   "subtype": "kdf",
+   "family": "pbkdf2",
+   "scenarios": [
+    "S07"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "scrypt",
+   "name": "scrypt",
+   "assetType": "algorithm",
+   "subtype": "kdf",
+   "family": "scrypt",
+   "scenarios": [
+    "S08"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "argon2id",
+   "name": "Argon2id",
+   "assetType": "algorithm",
+   "subtype": "kdf",
+   "family": "argon2",
+   "scenarios": [
+    "S09"
+   ],
+   "libraries": [
+    "lib.argon2-cffi"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 6,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "bcrypt",
+   "name": "bcrypt",
+   "assetType": "algorithm",
+   "subtype": "kdf",
+   "family": "bcrypt",
+   "scenarios": [
+    "S10"
+   ],
+   "libraries": [
+    "lib.bcrypt"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "aes-256-gcm",
+   "name": "AES-256-GCM",
+   "assetType": "algorithm",
+   "subtype": "ae",
+   "family": "aes",
+   "scenarios": [
+    "S11"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "aes-128-gcm",
+   "name": "AES-128-GCM",
+   "assetType": "algorithm",
+   "subtype": "ae",
+   "family": "aes",
+   "scenarios": [],
+   "libraries": [],
+   "implicit": true,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": null,
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "chacha20-poly1305",
+   "name": "ChaCha20-Poly1305",
+   "assetType": "algorithm",
+   "subtype": "ae",
+   "family": "chacha20",
+   "scenarios": [
+    "S12"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 4,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "aes-256-cbc",
+   "name": "AES-256-CBC-PKCS7",
+   "assetType": "algorithm",
+   "subtype": "block-cipher",
+   "family": "aes",
+   "scenarios": [
+    "S13"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 5,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "aes-128-ecb",
+   "name": "AES-128-ECB-PKCS7",
+   "assetType": "algorithm",
+   "subtype": "block-cipher",
+   "family": "aes",
+   "scenarios": [
+    "S14"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "aes-256-ctr",
+   "name": "AES-256-CTR",
+   "assetType": "algorithm",
+   "subtype": "block-cipher",
+   "family": "aes",
+   "scenarios": [
+    "S15"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 4,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "3des-cbc",
+   "name": "3DES-CBC-PKCS7 (3-key TDEA)",
+   "assetType": "algorithm",
+   "subtype": "block-cipher",
+   "family": "3des",
+   "scenarios": [
+    "S16"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 5,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "rsa-3072",
+   "name": "RSA-3072 key pair",
+   "assetType": "algorithm",
+   "subtype": "pke",
+   "family": "rsa",
+   "scenarios": [
+    "S17"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "mgf1-sha256",
+   "name": "MGF1-SHA256",
+   "assetType": "algorithm",
+   "subtype": "other",
+   "family": "mgf1",
+   "scenarios": [
+    "S17"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "rsa-oaep-sha256",
+   "name": "RSAES-OAEP-SHA256 (RSA-3072)",
+   "assetType": "algorithm",
+   "subtype": "pke",
+   "family": "rsa",
+   "scenarios": [
+    "S17"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 5,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "rsassa-pss-sha256",
+   "name": "RSASSA-PSS-SHA256 (RSA-3072)",
+   "assetType": "algorithm",
+   "subtype": "signature",
+   "family": "rsa",
+   "scenarios": [
+    "S17"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 5,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "rsassa-pkcs1v15-sha256",
+   "name": "RSASSA-PKCS1-v1_5-SHA256 (RSA-3072)",
+   "assetType": "algorithm",
+   "subtype": "signature",
+   "family": "rsa",
+   "scenarios": [
+    "S17"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "ecdsa-p256-sha256",
+   "name": "ECDSA P-256 with SHA-256",
+   "assetType": "algorithm",
+   "subtype": "signature",
+   "family": "ecdsa",
+   "scenarios": [
+    "S18",
+    "S23"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 7,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "ecdh-p256",
+   "name": "ECDH P-256",
+   "assetType": "algorithm",
+   "subtype": "key-agree",
+   "family": "ecdh",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 4,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "x25519",
+   "name": "X25519",
+   "assetType": "algorithm",
+   "subtype": "key-agree",
+   "family": "ecdh",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 4,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "ed25519",
+   "name": "Ed25519",
+   "assetType": "algorithm",
+   "subtype": "signature",
+   "family": "eddsa",
+   "scenarios": [
+    "S19"
+   ],
+   "libraries": [
+    "lib.pynacl"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "ml-kem-768",
+   "name": "ML-KEM-768",
+   "assetType": "algorithm",
+   "subtype": "kem",
+   "family": "ml-kem",
+   "scenarios": [
+    "S21"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": true,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "ml-dsa-65",
+   "name": "ML-DSA-65",
+   "assetType": "algorithm",
+   "subtype": "signature",
+   "family": "ml-dsa",
+   "scenarios": [
+    "S22"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": true,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "csprng",
+   "name": "Platform CSPRNG",
+   "assetType": "algorithm",
+   "subtype": "drbg",
+   "family": "csprng",
+   "scenarios": [
+    "S10",
+    "S12",
+    "S13",
+    "S15",
+    "S16",
+    "S23"
+   ],
+   "libraries": [
+    "lib.bcrypt",
+    "lib.py-stdlib",
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 10,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "cert.self-signed",
+   "name": "Self-signed X.509 v3 certificate",
+   "assetType": "certificate",
+   "subtype": "x.509",
+   "family": "ecdsa",
+   "scenarios": [
+    "S23"
+   ],
+   "libraries": [
+    "lib.py-stdlib",
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "tls13-client",
+   "name": "TLS 1.3 client configuration",
+   "assetType": "protocol",
+   "subtype": "tls",
+   "family": "tls-1.3",
+   "scenarios": [
+    "S24"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 3,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.hmac-key",
+   "name": "HMAC key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "hmac",
+   "scenarios": [
+    "S05"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.hkdf-ikm",
+   "name": "HKDF input keying material",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "hkdf",
+   "scenarios": [
+    "S06"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.hkdf-salt",
+   "name": "HKDF salt",
+   "assetType": "related-crypto-material",
+   "subtype": "salt",
+   "family": "hkdf",
+   "scenarios": [
+    "S06"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.hkdf-info",
+   "name": "HKDF info",
+   "assetType": "related-crypto-material",
+   "subtype": "additional-data",
+   "family": "hkdf",
+   "scenarios": [
+    "S06"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.hkdf-okm",
+   "name": "HKDF output keying material",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "hkdf",
+   "scenarios": [
+    "S06"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.pbkdf2-password",
+   "name": "PBKDF2 password",
+   "assetType": "related-crypto-material",
+   "subtype": "password",
+   "family": "pbkdf2",
+   "scenarios": [
+    "S07"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.pbkdf2-salt",
+   "name": "PBKDF2 salt",
+   "assetType": "related-crypto-material",
+   "subtype": "salt",
+   "family": "pbkdf2",
+   "scenarios": [
+    "S07"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.pbkdf2-dk",
+   "name": "PBKDF2 derived key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "pbkdf2",
+   "scenarios": [
+    "S07"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.scrypt-password",
+   "name": "scrypt password",
+   "assetType": "related-crypto-material",
+   "subtype": "password",
+   "family": "scrypt",
+   "scenarios": [
+    "S08"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.scrypt-salt",
+   "name": "scrypt salt",
+   "assetType": "related-crypto-material",
+   "subtype": "salt",
+   "family": "scrypt",
+   "scenarios": [
+    "S08"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.scrypt-dk",
+   "name": "scrypt derived key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "scrypt",
+   "scenarios": [
+    "S08"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.password",
+   "name": "Application password",
+   "assetType": "related-crypto-material",
+   "subtype": "password",
+   "family": "argon2",
+   "scenarios": [
+    "S09"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.argon2-salt",
+   "name": "Argon2id salt",
+   "assetType": "related-crypto-material",
+   "subtype": "salt",
+   "family": "argon2",
+   "scenarios": [
+    "S09"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.argon2-dk",
+   "name": "Argon2id output",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "argon2",
+   "scenarios": [
+    "S09"
+   ],
+   "libraries": [
+    "lib.argon2-cffi"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.bcrypt-salt",
+   "name": "bcrypt salt",
+   "assetType": "related-crypto-material",
+   "subtype": "salt",
+   "family": "bcrypt",
+   "scenarios": [
+    "S10"
+   ],
+   "libraries": [
+    "lib.bcrypt"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.bcrypt-hash",
+   "name": "bcrypt hash string",
+   "assetType": "related-crypto-material",
+   "subtype": "credential",
+   "family": "bcrypt",
+   "scenarios": [
+    "S10"
+   ],
+   "libraries": [
+    "lib.bcrypt"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.gcm-key",
+   "name": "AES-256-GCM key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "aes",
+   "scenarios": [
+    "S11"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.gcm-iv",
+   "name": "AES-GCM IV",
+   "assetType": "related-crypto-material",
+   "subtype": "nonce",
+   "family": "aes",
+   "scenarios": [
+    "S11"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.gcm-aad",
+   "name": "AES-GCM additional authenticated data",
+   "assetType": "related-crypto-material",
+   "subtype": "additional-data",
+   "family": "aes",
+   "scenarios": [
+    "S11"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.chacha-key",
+   "name": "ChaCha20-Poly1305 key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "chacha20",
+   "scenarios": [
+    "S12"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.chacha-nonce",
+   "name": "ChaCha20-Poly1305 nonce",
+   "assetType": "related-crypto-material",
+   "subtype": "nonce",
+   "family": "chacha20",
+   "scenarios": [
+    "S12"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.cbc-key",
+   "name": "AES-256-CBC key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "aes",
+   "scenarios": [
+    "S13"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.cbc-iv",
+   "name": "AES-CBC IV",
+   "assetType": "related-crypto-material",
+   "subtype": "initialization-vector",
+   "family": "aes",
+   "scenarios": [
+    "S13"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ecb-key",
+   "name": "AES-128-ECB key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "aes",
+   "scenarios": [
+    "S14"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ctr-key",
+   "name": "AES-256-CTR key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "aes",
+   "scenarios": [
+    "S15"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ctr-iv",
+   "name": "AES-CTR initial counter block",
+   "assetType": "related-crypto-material",
+   "subtype": "initialization-vector",
+   "family": "aes",
+   "scenarios": [
+    "S15"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.tdes-key",
+   "name": "3DES key",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "3des",
+   "scenarios": [
+    "S16"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.tdes-iv",
+   "name": "3DES IV",
+   "assetType": "related-crypto-material",
+   "subtype": "initialization-vector",
+   "family": "3des",
+   "scenarios": [
+    "S16"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.rsa-private-key",
+   "name": "RSA-3072 private key",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "rsa",
+   "scenarios": [
+    "S17"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.rsa-public-key",
+   "name": "RSA-3072 public key",
+   "assetType": "related-crypto-material",
+   "subtype": "public-key",
+   "family": "rsa",
+   "scenarios": [
+    "S17"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ecdsa-private-key",
+   "name": "ECDSA P-256 private key",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "ecdsa",
+   "scenarios": [
+    "S18"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ecdsa-public-key",
+   "name": "ECDSA P-256 public key",
+   "assetType": "related-crypto-material",
+   "subtype": "public-key",
+   "family": "ecdsa",
+   "scenarios": [
+    "S18"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ed25519-seed",
+   "name": "Ed25519 private key seed",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "eddsa",
+   "scenarios": [
+    "S19"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ed25519-public-key",
+   "name": "Ed25519 public key",
+   "assetType": "related-crypto-material",
+   "subtype": "public-key",
+   "family": "eddsa",
+   "scenarios": [
+    "S19"
+   ],
+   "libraries": [
+    "lib.pynacl"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.x25519-private-key-a",
+   "name": "X25519 private key (party A)",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "ecdh",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.x25519-private-key-b",
+   "name": "X25519 private key (party B)",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "ecdh",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.x25519-shared-secret",
+   "name": "X25519 shared secret",
+   "assetType": "related-crypto-material",
+   "subtype": "shared-secret",
+   "family": "ecdh",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ecdh-private-key-a",
+   "name": "ECDH P-256 private key (party A)",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "ecdh",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ecdh-private-key-b",
+   "name": "ECDH P-256 private key (party B)",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "ecdh",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.ecdh-shared-secret",
+   "name": "ECDH P-256 shared secret",
+   "assetType": "related-crypto-material",
+   "subtype": "shared-secret",
+   "family": "ecdh",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.session-info",
+   "name": "Session-key HKDF info",
+   "assetType": "related-crypto-material",
+   "subtype": "additional-data",
+   "family": "hkdf",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.session-key",
+   "name": "Session key (HKDF over X25519 || ECDH secrets)",
+   "assetType": "related-crypto-material",
+   "subtype": "secret-key",
+   "family": "hkdf",
+   "scenarios": [
+    "S20"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.mlkem-decapsulation-key",
+   "name": "ML-KEM-768 decapsulation key",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "ml-kem",
+   "scenarios": [
+    "S21"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": true,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.mlkem-encapsulation-key",
+   "name": "ML-KEM-768 encapsulation key",
+   "assetType": "related-crypto-material",
+   "subtype": "public-key",
+   "family": "ml-kem",
+   "scenarios": [
+    "S21"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": true,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.mlkem-shared-secret",
+   "name": "ML-KEM-768 shared secret",
+   "assetType": "related-crypto-material",
+   "subtype": "shared-secret",
+   "family": "ml-kem",
+   "scenarios": [
+    "S21"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": true,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 2,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.mldsa-private-key",
+   "name": "ML-DSA-65 private key",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "ml-dsa",
+   "scenarios": [
+    "S22"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": true,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.mldsa-public-key",
+   "name": "ML-DSA-65 public key",
+   "assetType": "related-crypto-material",
+   "subtype": "public-key",
+   "family": "ml-dsa",
+   "scenarios": [
+    "S22"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": true,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.cert-private-key",
+   "name": "Certificate private key (P-256)",
+   "assetType": "related-crypto-material",
+   "subtype": "private-key",
+   "family": "ecdsa",
+   "scenarios": [
+    "S23"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "m.cert-public-key",
+   "name": "Certificate subject public key (P-256)",
+   "assetType": "related-crypto-material",
+   "subtype": "public-key",
+   "family": "ecdsa",
+   "scenarios": [
+    "S23"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": {
+    "expected": 1,
+    "matched": 0,
+    "reported": 0,
+    "reportedMatched": 0
+   },
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "lib.py-stdlib",
+   "name": "CPython standard library",
+   "assetType": "library",
+   "subtype": "library",
+   "family": "generic/cpython",
+   "scenarios": [
+    "S01",
+    "S02",
+    "S03",
+    "S04",
+    "S05",
+    "S06",
+    "S07",
+    "S08",
+    "S09",
+    "S11",
+    "S13",
+    "S14",
+    "S15",
+    "S19",
+    "S20",
+    "S23",
+    "S24"
+   ],
+   "libraries": [
+    "lib.py-stdlib"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": null,
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "lib.pyca",
+   "name": "cryptography (pyca)",
+   "assetType": "library",
+   "subtype": "library",
+   "family": "pypi/cryptography",
+   "scenarios": [
+    "S02",
+    "S03",
+    "S06",
+    "S08",
+    "S11",
+    "S13",
+    "S14",
+    "S17",
+    "S18",
+    "S20",
+    "S21",
+    "S22",
+    "S23"
+   ],
+   "libraries": [
+    "lib.pyca"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": null,
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "lib.pycryptodome",
+   "name": "PyCryptodome",
+   "assetType": "library",
+   "subtype": "library",
+   "family": "pypi/pycryptodome",
+   "scenarios": [
+    "S02",
+    "S12",
+    "S15",
+    "S16"
+   ],
+   "libraries": [
+    "lib.pycryptodome"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": null,
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "lib.pynacl",
+   "name": "PyNaCl",
+   "assetType": "library",
+   "subtype": "library",
+   "family": "pypi/pynacl",
+   "scenarios": [
+    "S19"
+   ],
+   "libraries": [
+    "lib.pynacl"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": null,
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "lib.argon2-cffi",
+   "name": "argon2-cffi",
+   "assetType": "library",
+   "subtype": "library",
+   "family": "pypi/argon2-cffi",
+   "scenarios": [
+    "S09"
+   ],
+   "libraries": [
+    "lib.argon2-cffi"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": null,
+   "bestDetection": null
+  },
+  {
+   "tool": "cbom-lens",
+   "toolVersion": "1.1.1",
+   "case": "Python",
+   "language": "Python",
+   "kind": "gt",
+   "assetId": "lib.bcrypt",
+   "name": "bcrypt",
+   "assetType": "library",
+   "subtype": "library",
+   "family": "pypi/bcrypt",
+   "scenarios": [
+    "S10"
+   ],
+   "libraries": [
+    "lib.bcrypt"
+   ],
+   "implicit": false,
+   "pqc": false,
+   "scored": false,
+   "detected": false,
+   "matchLevel": null,
+   "identityScore": 0.0,
+   "located": false,
+   "ambiguous": false,
+   "detections": 0,
+   "detectionRefs": [],
+   "attributes": {},
+   "completeness": null,
+   "correctness": null,
+   "locations": null,
+   "bestDetection": null
+  }
+ ],
+ "summary": {
+  "cbom-lens": {
+   "support": 0,
+   "detected": 0,
+   "recall": null,
+   "precision": null,
+   "completeness": null,
+   "correctness": null,
+   "locality": null,
+   "score": null,
+   "falsePositives": 0,
+   "lexicalFalsePositives": 0
+  }
+ }
+}
