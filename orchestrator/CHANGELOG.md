@@ -11,6 +11,14 @@
 - Tool specs: `"*"` under `languages` runs a language-agnostic tool on every case, including
   languages added to the baseline later.
 - A run that times out with truncated output keeps the status `timeout`.
+- New built-in tool `cryptoscan` (CSNP CryptoScan), enabled by default as the fifth generator: built with
+  `go install` and run as `scan --format cbom --include-quantum-safe --no-config`; exported to 2CBOM as
+  `static-source`.
+- Tool specs: `ok_exit_codes` lists the exit codes that mean success (CryptoScan exits 1 on a CRITICAL
+  finding), so such runs carry no "exited with 1" note.
+- `--launcher` / `tools.default_launcher` switches only the tools that define that launcher; a
+  Docker-only tool (`cbomkit`) or a local-only one (`cryptoscan`) keeps its own.
+- Lexicon: `SHAKE` without a size is SHA-3 (XOF), and `ECC` is the generic elliptic-curve family, like `EC`.
 
 ## 0.1.0 — 2026-11-05
 

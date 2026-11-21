@@ -4,7 +4,7 @@ baseline:
   ref: main
   path: .orchestrator/baseline
 tools:
-  enabled: [cbomkit, cdxgen, cryptobom-forge, cbomkit-theia]
+  enabled: [cbomkit, cdxgen, cryptobom-forge, cbomkit-theia, cryptoscan]
   pins: {}
 results:
   dir: results

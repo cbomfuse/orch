@@ -7,7 +7,7 @@
 | Python ≥ 3.10, `git` | everything | `pip install -e .` installs the only dependency (PyYAML) |
 | Docker (or Podman with a `docker` shim) | `cbomkit`, `cdxgen`, `cbomkit-theia` (default launcher) | images are pulled by release tag; set `docker.pull_policy` |
 | Node.js ≥ 24 | `cdxgen` with `--launcher local` | installed into `.orchestrator/cache/cdxgen` via npm |
-| Go ≥ 1.21 | `cbomkit-theia` with `--launcher local` | built into `.orchestrator/cache/cbomkit-theia/<version>`; `GOTOOLCHAIN=auto` fetches the Go release theia's `go.mod` requires |
+| Go ≥ 1.21 | `cryptoscan` (its only launcher); `cbomkit-theia` with `--launcher local` | built with `go install` into `.orchestrator/cache/<tool>/<version>`; `GOTOOLCHAIN=auto` fetches the Go release a tool's `go.mod` requires |
 | ~1 GB disk, Python venv | `cryptobom-forge` | the CodeQL bundle (CLI + query packs) is downloaded once into `.orchestrator/cache/cryptobom-forge/codeql/<version>` |
 | `GITHUB_TOKEN` (optional) | version resolution | lifts the unauthenticated API limit; without it `git ls-remote` is used, which needs no token |
 
@@ -32,14 +32,15 @@ orchestrator runs list | runs diff <run1> <run2>
 orchestrator normalize <cbom.json> [--verbose]     # see how a file is lifted to the detection model
 ```
 
-`<run>` is a run id, a run directory, or a `scorecard.json`/`priors.json` path.
+`<run>` is a run id, a run directory, or a `scorecard.json`/`priors.json` path.  `--launcher` switches
+only the tools that define that launcher: `cbomkit` stays on Docker and `cryptoscan` stays local.
 
 ## Typical sessions
 
 Newest versions of everything, nightly:
 
 ```bash
-orchestrator -v run            # resolves, pulls/installs, scans 5 cases × 4 tools, evaluates, exports
+orchestrator -v run            # resolves, pulls/installs, scans 5 cases × 5 tools, evaluates, exports
 ```
 
 Reproduce a previous run's versions:
@@ -47,7 +48,7 @@ Reproduce a previous run's versions:
 ```bash
 jq '.tools | map_values(.tag // .version)' results/20261105-213000/manifest.json
 orchestrator run --pin cbomkit=v2.3.0 --pin cdxgen=v13.6.0 --pin cryptobom-forge=1.1.0 --pin codeql=codeql-bundle-v2.27.4 \
-                 --pin cbomkit-theia=v1.1.2
+                 --pin cbomkit-theia=v1.1.2 --pin cryptoscan=v1.5.0
 ```
 
 The baseline changed (new scenario, corrected ground truth): re-score without re-running tools:
@@ -88,6 +89,14 @@ orchestrator run --tool cbomkit --case Java --run-id cbomkit-java --skip-install
   Its java.security plugin only re-scores a CBOM given with `--bom` and stays inactive.  CBOMs from the
   image report version `edge`; the manifest's image digest and OCI version label identify the build.
   `--launcher local` builds the release with `go install` (v1.1.0 or later).
+* **cryptoscan** — built with `go install github.com/csnp/cryptoscan/cmd/cryptoscan@<commit>` (no
+  image is published) with the release binaries' version flag, then
+  `cryptoscan scan <case> --format cbom --include-quantum-safe --no-config --output cbom.cryptoscan.json`.
+  `--include-quantum-safe` puts back the SHA-2 and AES findings CryptoScan leaves out by default; the
+  `cbom` command runs the same scan without them and has no such flag.  `scan` exits 1 when a finding
+  is CRITICAL, which `ok_exit_codes: [0, 1]` treats as success.  It is pattern-based and runs on every
+  case.  Release 1.5.0 writes TLS findings as `algorithm` components rather than `protocol`, so its
+  protocol recall is 0 until a release carries the fix already on its main branch.
 
 Edit `orchestrator/data/tools/<tool>.yaml` (or override it in `tools.d/`) to change flags, images or
 queries; `orchestrator tools show <tool>` prints the effective spec.

@@ -38,6 +38,7 @@ class ToolSpec:
     languages: dict = field(default_factory=dict)
     output: str = "cbom.json"
     capture_stdout: bool = False             # the tool prints its CBOM on stdout; it is saved as `output`
+    ok_exit_codes: list = field(default_factory=lambda: [0])   # e.g. [0, 1] for a tool that exits 1 on findings
     format: str = "auto"
     timeout_seconds: Optional[int] = None
     twocbom: dict = field(default_factory=dict)
@@ -197,10 +198,16 @@ class ToolAdapter(ABC):
         self.launcher = self._pick_launcher()
 
     def _pick_launcher(self) -> str:
+        """``tools.default_launcher`` (``--launcher``) applies to the tools that define that launcher:
+        ``--launcher local`` leaves a Docker-only tool on Docker, ``--launcher docker`` a local-only one local."""
+        own = self.spec.launcher or "docker"
         forced = self.config.get("tools", "default_launcher")
-        if forced:
-            return str(forced)
-        return self.spec.launcher or "docker"
+        if not forced:
+            return own
+        forced = str(forced)
+        if forced in ("docker", "local") and forced != own and not getattr(self.spec, forced):
+            return own
+        return forced
 
     @property
     def id(self) -> str:

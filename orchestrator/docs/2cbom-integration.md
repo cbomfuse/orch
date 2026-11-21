@@ -61,7 +61,7 @@ r.explanation    # human-readable evidence trail
 
 | 2CBOM | orchestrator |
 |---|---|
-| `Source.tool` (after alias resolution) | `tool_a` / `tool_b` — the spec ids (`cbomkit`, `cdxgen`, `cryptobom-forge`, `cbomkit-theia`) |
+| `Source.tool` (after alias resolution) | `tool_a` / `tool_b` — the spec ids (`cbomkit`, `cdxgen`, `cryptobom-forge`, `cbomkit-theia`, `cryptoscan`) |
 | asset type of the canonical asset | `assetType` facet |
 | `primitive` / material `type` / protocol `type` | `subtype` facet |
 | descriptor `family` | `family` facet (lexicon spelling: `aes`, `rsa`, `sha2`, `ml-kem`, …) |

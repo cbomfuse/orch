@@ -42,6 +42,7 @@ local:
 
 output: mytool-cbom.json   # relative to the workspace; glob allowed (largest match wins)
 capture_stdout: false      # true: the tool prints its CBOM on stdout, which is saved as `output` (a plain path)
+ok_exit_codes: [0]         # exit codes that mean success, e.g. [0, 1] for a tool that exits 1 when it finds something
 format: auto               # auto | cyclonedx | ibm-cbom (auto-detection is reliable)
 
 languages:                 # corpus language (or case directory name) -> value of {language}
@@ -84,7 +85,9 @@ twocbom:                   # copied into the exported tools.json
 3. `run` — per case: copy the case directory to a workspace, render env/args, execute (with the
    timeout), locate the output, copy it to `raw/<id>/<case>/`, classify the status.  With
    `capture_stdout` the output is the tool's stdout (stderr goes to the log); a tool that exits 0
-   without printing anything is `failed`.  `data/tools/cbomkit-theia.yaml` is a complete example.
+   without printing anything is `failed`.  `data/tools/cbomkit-theia.yaml` is a complete example.  An
+   exit code outside `ok_exit_codes` with an output is scored with a note; `data/tools/cryptoscan.yaml`
+   declares 1, CryptoScan's "found something CRITICAL".
 4. Evaluation reads the output with the auto-detecting normaliser, so any CycloneDX 1.5–1.7 or IBM
    1.4-cbom-1.0 document works.  Tool names found in `metadata.tools` are added to the 2CBOM aliases.
 

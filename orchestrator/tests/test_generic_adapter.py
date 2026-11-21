@@ -133,3 +133,41 @@ def test_capture_stdout_spec(tmp_path, fixtures):
     assert res2.status == "failed" and res2.exit_code == 0 and res2.output_path is None
     assert any("nothing to stdout" in n for n in res2.notes)
     assert not (work / "out" / "printed.json").exists()      # the stale capture of the first run is gone too
+
+
+def test_ok_exit_codes(tmp_path, fixtures):
+    """A tool that exits 1 when it finds something: no "exited with 1" note once 1 is declared OK."""
+    import sys
+    import yaml
+    script = tmp_path / "gate.py"
+    script.write_text("import json, sys\n"
+                      "json.dump({'bomFormat': 'CycloneDX', 'specVersion': '1.6', 'components': [\n"
+                      "    {'type': 'cryptographic-asset', 'bom-ref': 'm', 'name': 'MD5',\n"
+                      "     'cryptoProperties': {'assetType': 'algorithm'}}]}, open(sys.argv[1], 'w'))\n"
+                      "sys.exit(1)\n")
+    tools_d = tmp_path / "tools.d"
+    tools_d.mkdir()
+    base = {"repo": None, "launcher": "local", "local": {"command": [sys.executable, str(script), "{output}"]},
+            "output": "gate.json", "languages": {"*": "any"}}
+    (tools_d / "strict.yaml").write_text(yaml.safe_dump({"id": "strict", **base}))
+    (tools_d / "lenient.yaml").write_text(yaml.safe_dump({"id": "lenient", "ok_exit_codes": [0, 1], **base}))
+    config = Config.defaults(tmp_path)
+    config.data["tools"]["dir"] = str(tools_d)
+    case = Case("Python", "Python", fixtures / "baseline-mini" / "Python", fixtures / "baseline-mini" / "Python" / "ground-truth.json", None, "crypto_showcase.py")
+    for tool, expect_note in (("strict", True), ("lenient", False)):
+        adapter = make_adapter(load_specs(config)[tool], config)
+        work = tmp_path / tool
+        work.mkdir()
+        res = adapter.run(case, work, adapter.resolve(), tmp_path / "raw" / tool, tmp_path / "log.txt")
+        assert res.status == "ok" and res.exit_code == 1
+        assert any("exited with 1" in n for n in res.notes) is expect_note
+
+
+def test_launcher_override_applies_where_the_tool_has_that_launcher():
+    config = Config.defaults()
+    specs = load_specs(config)
+    for forced, expected in (("local", {"cbomkit": "docker", "cdxgen": "local", "cbomkit-theia": "local", "cryptoscan": "local"}),
+                             ("docker", {"cbomkit": "docker", "cdxgen": "docker", "cbomkit-theia": "docker", "cryptoscan": "local"}),
+                             (None, {"cbomkit": "docker", "cdxgen": "docker", "cbomkit-theia": "docker", "cryptoscan": "local"})):
+        config.data["tools"]["default_launcher"] = forced
+        assert {tid: make_adapter(specs[tid], config).launcher for tid in expected} == expected, forced

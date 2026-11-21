@@ -18,7 +18,8 @@ Spec excerpt (see ``orchestrator/data/tools/cdxgen.yaml`` for a complete example
 
 A tool that prints its CBOM on stdout (``cbomkit-theia``) sets ``capture_stdout: true``: stdout is then
 written to ``output`` (a plain relative path) and stderr goes to the log; empty stdout counts as no
-output.  A language-agnostic tool lists ``"*"`` under ``languages`` to run on every case.
+output.  A language-agnostic tool lists ``"*"`` under ``languages`` to run on every case.  A tool that
+exits non-zero when it finds something lists those codes in ``ok_exit_codes`` (default ``[0]``).
 
 Placeholders: ``{version}`` (tag without ``v``), ``{tag}``, ``{commit}``, ``{workdir}`` (host path of
 the case copy), ``{mount}``, ``{output}`` (host path), ``{output_container}``, ``{language}`` (the
@@ -161,7 +162,7 @@ class CommandToolAdapter(ToolAdapter):
         elif output is None:
             status = "failed"
             notes.append("no output file produced" + (f" (exit {res.returncode})" if res.returncode else ""))
-        elif not res.ok:
+        elif res.returncode not in {int(c) for c in (self.spec.ok_exit_codes or [0])}:
             notes.append(f"tool exited with {res.returncode} but produced output; scored anyway")
         dest = None
         if output is not None:

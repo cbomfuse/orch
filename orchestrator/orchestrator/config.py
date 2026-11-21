@@ -22,7 +22,7 @@ DEFAULT_CONFIG: dict = {
     },
     "tools": {
         "dir": "tools.d",
-        "enabled": ["cbomkit", "cdxgen", "cryptobom-forge", "cbomkit-theia"],
+        "enabled": ["cbomkit", "cdxgen", "cryptobom-forge", "cbomkit-theia", "cryptoscan"],
         "pins": {},
         "default_launcher": None,
         "cache_dir": ".orchestrator/cache",
@@ -155,7 +155,7 @@ baseline:
 
 tools:
   dir: tools.d                  # one YAML spec per CBOM generator (see docs/adding-a-tool.md)
-  enabled: [cbomkit, cdxgen, cryptobom-forge, cbomkit-theia]
+  enabled: [cbomkit, cdxgen, cryptobom-forge, cbomkit-theia, cryptoscan]
   pins: {}                      # pin a tool to a version, e.g. {cdxgen: v13.7.0}; otherwise newest release
   default_launcher: null        # docker | local | null (= each tool's own default)
   cache_dir: .orchestrator/cache
