@@ -10,4 +10,8 @@
   1.5.0 (Apache-2.0), built from the `v1.5.0` tag, run as
   `cryptoscan scan Python --format cbom --include-quantum-safe --no-config` on a copy of `baseline-mini/Python`
   without `ground-truth.json` and the reference CBOM — what the orchestrator runs.
+  `cboms/cbom-lens-golden-cdx16.json` is the golden CycloneDX 1.6 output of
+  [CBOM-Lens](https://github.com/OmniTrustILM/cbom-lens) 1.1.1 (Apache-2.0),
+  `internal/bom/testdata/golden/corpus-1.6.json`: its own test corpus of certificates, keys, a CRL, a
+  CSR, secrets and a TLS endpoint, with the locations its test normalises.
 - `mini-gt.json` — a tiny hand-written ground truth with known answers for the matcher tests.

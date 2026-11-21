@@ -19,6 +19,12 @@
 - `--launcher` / `tools.default_launcher` switches only the tools that define that launcher; a
   Docker-only tool (`cbomkit`) or a local-only one (`cryptoscan`) keeps its own.
 - Lexicon: `SHAKE` without a size is SHA-3 (XOF), and `ECC` is the generic elliptic-curve family, like `EC`.
+- New built-in tool `cbom-lens` (OmniTrust CBOM-Lens), enabled by default as the sixth generator: built
+  with `go install`, run as `run --config` on a config written per run, CBOM 1.6 from stdout; exported to
+  2CBOM as `static-binary`.
+- Tool specs: `files:` writes config files (placeholders rendered) to `{files}` before each run.
+- The self-reported tool comes from `metadata.component` when `metadata.tools` is empty and the
+  component's name is one of the tool's aliases (CBOM-Lens identifies itself that way).
 
 ## 0.1.0 — 2026-11-05
 

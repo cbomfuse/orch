@@ -56,6 +56,9 @@ def extract_tools(metadata: dict) -> ToolMetadata:
     meta.tools = found
     if found:
         meta.tool_name, meta.tool_version = found[0]["name"], found[0]["version"] or None
+    comp = (metadata or {}).get("component")
+    if isinstance(comp, dict) and _str(comp.get("name")):
+        meta.component = {"type": _str(comp.get("type")), "name": _str(comp.get("name")), "version": _str(comp.get("version"))}
     return meta
 
 

@@ -43,6 +43,9 @@ local:
 output: mytool-cbom.json   # relative to the workspace; glob allowed (largest match wins)
 capture_stdout: false      # true: the tool prints its CBOM on stdout, which is saved as `output` (a plain path)
 ok_exit_codes: [0]         # exit codes that mean success, e.g. [0, 1] for a tool that exits 1 when it finds something
+files:                     # written to {files} before each run, names and contents rendered (config files)
+  mytool.yaml: |
+    scan: {root: "{mount}"}
 format: auto               # auto | cyclonedx | ibm-cbom (auto-detection is reliable)
 
 languages:                 # corpus language (or case directory name) -> value of {language}
@@ -74,6 +77,7 @@ twocbom:                   # copied into the exported tools.json
 | `{language}` | the per-language value; other per-language keys as `{language_<key>}` |
 | `{case}`, `{language_name}`, `{source_file}` | case id, corpus language, main source file |
 | `{cache}` | `.orchestrator/cache/<id>` |
+| `{files}` | `{cache}/files`, where the `files:` entries are written |
 | `{home}`, `{platform}`, `{uid}`, `{gid}` | host facts |
 
 ### What the orchestrator does with it
@@ -87,9 +91,12 @@ twocbom:                   # copied into the exported tools.json
    `capture_stdout` the output is the tool's stdout (stderr goes to the log); a tool that exits 0
    without printing anything is `failed`.  `data/tools/cbomkit-theia.yaml` is a complete example.  An
    exit code outside `ok_exit_codes` with an output is scored with a note; `data/tools/cryptoscan.yaml`
-   declares 1, CryptoScan's "found something CRITICAL".
+   declares 1, CryptoScan's "found something CRITICAL".  A tool configured by a file gets it through
+   `files:`, as `data/tools/cbom-lens.yaml` does (Docker launchers mount `{files}` with `docker.mounts`).
 4. Evaluation reads the output with the auto-detecting normaliser, so any CycloneDX 1.5–1.7 or IBM
-   1.4-cbom-1.0 document works.  Tool names found in `metadata.tools` are added to the 2CBOM aliases.
+   1.4-cbom-1.0 document works.  Tool names found in `metadata.tools` are added to the 2CBOM aliases;
+   a tool that names itself in `metadata.component` instead is recognised when that name is one of
+   its `twocbom.aliases`.
 
 ## Pipeline tools (Python adapters)
 

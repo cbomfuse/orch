@@ -19,7 +19,9 @@ Spec excerpt (see ``orchestrator/data/tools/cdxgen.yaml`` for a complete example
 A tool that prints its CBOM on stdout (``cbomkit-theia``) sets ``capture_stdout: true``: stdout is then
 written to ``output`` (a plain relative path) and stderr goes to the log; empty stdout counts as no
 output.  A language-agnostic tool lists ``"*"`` under ``languages`` to run on every case.  A tool that
-exits non-zero when it finds something lists those codes in ``ok_exit_codes`` (default ``[0]``).
+exits non-zero when it finds something lists those codes in ``ok_exit_codes`` (default ``[0]``).  A tool
+driven by a config file gets it from ``files:`` (name -> content, placeholders rendered), written to
+``{files}`` (``{cache}/files``) before each run.
 
 Placeholders: ``{version}`` (tag without ``v``), ``{tag}``, ``{commit}``, ``{workdir}`` (host path of
 the case copy), ``{mount}``, ``{output}`` (host path), ``{output_container}``, ``{language}`` (the
@@ -138,6 +140,16 @@ class CommandToolAdapter(ToolAdapter):
             return self._run_docker(case, workdir, version, out_dir, log_path, entry)
         return self._run_local(case, workdir, version, out_dir, log_path, entry)
 
+    def _write_files(self, variables: dict) -> None:
+        """Write the spec's ``files:`` into ``{files}``, names and contents rendered for this run."""
+        root = Path(variables["files"]).resolve()
+        for name, content in (self.spec.files or {}).items():
+            path = (root / render(str(name), variables)).resolve()
+            if root not in path.parents:
+                raise ValueError(f"{self.spec.id}: files entry {name!r} is outside {root}")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(render(str(content), variables), encoding="utf-8")
+
     def _stdout_target(self, variables: dict) -> Optional[Path]:
         """Where stdout is saved for ``capture_stdout`` tools (``{output}``), or None."""
         if not self.spec.capture_stdout:
@@ -194,6 +206,7 @@ class CommandToolAdapter(ToolAdapter):
         mounts = {str(workdir): mount}
         for host, cont in (render(dk.get("mounts") or {}, variables)).items():
             mounts[host] = cont
+        self._write_files(variables)
         res = self.docker.run(image, args, mounts=mounts, env=env, workdir=render(dk.get("workdir"), variables),
                               user=dk.get("user"), timeout=self.timeout(), log_path=log_path,
                               entrypoint=dk.get("entrypoint"), extra_args=render(dk.get("extra_args") or [], variables),
@@ -210,6 +223,7 @@ class CommandToolAdapter(ToolAdapter):
         argv = render(as_argv(entry.get("command") if entry.get("command") is not None else local.get("command")), variables)
         if argv and not which(argv[0]) and not Path(argv[0]).exists():
             return ToolRunResult("failed", notes=[f"{argv[0]} not found on PATH; run `orchestrator tools install {self.spec.id}`"])
+        self._write_files(variables)
         res = run_command(argv, cwd=render(local.get("cwd"), variables) or workdir, env=env, timeout=self.timeout(),
                           log_path=log_path, stdout_path=self._stdout_target(variables))
         return self._finish(res, workdir, variables, out_dir, res.argv)

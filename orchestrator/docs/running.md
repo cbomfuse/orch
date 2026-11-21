@@ -7,7 +7,7 @@
 | Python ≥ 3.10, `git` | everything | `pip install -e .` installs the only dependency (PyYAML) |
 | Docker (or Podman with a `docker` shim) | `cbomkit`, `cdxgen`, `cbomkit-theia` (default launcher) | images are pulled by release tag; set `docker.pull_policy` |
 | Node.js ≥ 24 | `cdxgen` with `--launcher local` | installed into `.orchestrator/cache/cdxgen` via npm |
-| Go ≥ 1.21 | `cryptoscan` (its only launcher); `cbomkit-theia` with `--launcher local` | built with `go install` into `.orchestrator/cache/<tool>/<version>`; `GOTOOLCHAIN=auto` fetches the Go release a tool's `go.mod` requires |
+| Go ≥ 1.21 | `cryptoscan`, `cbom-lens` (their only launcher); `cbomkit-theia` with `--launcher local` | built with `go install` into `.orchestrator/cache/<tool>/<version>`; `GOTOOLCHAIN=auto` fetches the Go release a tool's `go.mod` requires (1.26.9 for cbom-lens 1.1.1) |
 | ~1 GB disk, Python venv | `cryptobom-forge` | the CodeQL bundle (CLI + query packs) is downloaded once into `.orchestrator/cache/cryptobom-forge/codeql/<version>` |
 | `GITHUB_TOKEN` (optional) | version resolution | lifts the unauthenticated API limit; without it `git ls-remote` is used, which needs no token |
 
@@ -33,14 +33,14 @@ orchestrator normalize <cbom.json> [--verbose]     # see how a file is lifted to
 ```
 
 `<run>` is a run id, a run directory, or a `scorecard.json`/`priors.json` path.  `--launcher` switches
-only the tools that define that launcher: `cbomkit` stays on Docker and `cryptoscan` stays local.
+only the tools that define that launcher: `cbomkit` stays on Docker, `cryptoscan` and `cbom-lens` stay local.
 
 ## Typical sessions
 
 Newest versions of everything, nightly:
 
 ```bash
-orchestrator -v run            # resolves, pulls/installs, scans 5 cases × 5 tools, evaluates, exports
+orchestrator -v run            # resolves, pulls/installs, scans 5 cases × 6 tools, evaluates, exports
 ```
 
 Reproduce a previous run's versions:
@@ -48,7 +48,7 @@ Reproduce a previous run's versions:
 ```bash
 jq '.tools | map_values(.tag // .version)' results/20261105-213000/manifest.json
 orchestrator run --pin cbomkit=v2.3.0 --pin cdxgen=v13.6.0 --pin cryptobom-forge=1.1.0 --pin codeql=codeql-bundle-v2.27.4 \
-                 --pin cbomkit-theia=v1.1.2 --pin cryptoscan=v1.5.0
+                 --pin cbomkit-theia=v1.1.2 --pin cryptoscan=v1.5.0 --pin cbom-lens=1.1.1
 ```
 
 The baseline changed (new scenario, corrected ground truth): re-score without re-running tools:
@@ -97,6 +97,14 @@ orchestrator run --tool cbomkit --case Java --run-id cbomkit-java --skip-install
   is CRITICAL, which `ok_exit_codes: [0, 1]` treats as success.  It is pattern-based and runs on every
   case.  Release 1.5.0 writes TLS findings as `algorithm` components rather than `protocol`, so its
   protocol recall is 0 until a release carries the fix already on its main branch.
+* **cbom-lens** — built with `go install github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@<commit>` (no
+  image is published), then `cbom-lens run --config .orchestrator/cache/cbom-lens/files/cbom-lens.yaml`
+  in the case workspace.  The config (`files:` in the spec) asks for a manual one-shot scan of the
+  working directory only, CBOM 1.6 on stdout (`capture_stdout`) and logs on stderr; containers, ports
+  and the registry stay off.  1.6 rather than 1.7 because 1.7 replaces the `…Ref` fields the
+  normaliser reads with `relatedCryptographicAssets`.  Like cbomkit-theia it scans files, not source
+  code.  CBOM-Lens names itself in `metadata.component`, which the orchestrator accepts as the
+  self-reported tool because the name is one of its aliases.
 
 Edit `orchestrator/data/tools/<tool>.yaml` (or override it in `tools.d/`) to change flags, images or
 queries; `orchestrator tools show <tool>` prints the effective spec.
@@ -123,5 +131,8 @@ queries; `orchestrator tools show <tool>` prints the effective spec.
   interpreted.
 * **`cbomkit-theia` is `failed` with "the tool wrote nothing to stdout"** — theia logs `Could not scan
   dir` and still exits 0; the reason is in the stderr part of `logs/cbomkit-theia/<case>.log`.
+* **`cbom-lens` is `timeout`** — in 1.1.1 a scan that fails leaves `cbom-lens run` waiting rather than
+  exiting (manual mode returns only upload errors), so the orchestrator stops it after
+  `timeout_seconds` (300).  `logs/cbom-lens/<case>.log` has the `scan have failed` line and its reason.
 * **A language directory is missing from the run** — `baseline.include_cases`/`exclude_cases`, or
   the directory has no `ground-truth.json`.

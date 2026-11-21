@@ -171,3 +171,37 @@ def test_launcher_override_applies_where_the_tool_has_that_launcher():
                              (None, {"cbomkit": "docker", "cdxgen": "docker", "cbomkit-theia": "docker", "cryptoscan": "local"})):
         config.data["tools"]["default_launcher"] = forced
         assert {tid: make_adapter(specs[tid], config).launcher for tid in expected} == expected, forced
+
+
+def test_files_are_rendered_and_written_before_the_run(tmp_path, fixtures):
+    """A config-file-driven tool: `files:` lands in {files} with placeholders filled in for the case."""
+    import sys
+    import pytest
+    import yaml
+    script = tmp_path / "configured.py"
+    script.write_text("import json, sys\n"
+                      "conf = open(sys.argv[1]).read()\n"
+                      "assert conf.startswith('lang=python'), conf\n"
+                      "json.dump({'bomFormat': 'CycloneDX', 'specVersion': '1.6', 'components': []}, open(sys.argv[2], 'w'))\n")
+    tools_d = tmp_path / "tools.d"
+    tools_d.mkdir()
+    (tools_d / "configured.yaml").write_text(yaml.safe_dump({
+        "id": "configured", "repo": None, "launcher": "local", "languages": {"Python": "python"},
+        "files": {"conf/{case}.ini": "lang={language}\nroot={workdir}\n"},
+        "local": {"command": [sys.executable, str(script), "{files}/conf/{case}.ini", "{output}"]}, "output": "o.json"}))
+    (tools_d / "escaping.yaml").write_text(yaml.safe_dump({
+        "id": "escaping", "repo": None, "launcher": "local", "languages": {"Python": "python"},
+        "files": {"../outside.txt": "x"}, "local": {"command": [sys.executable, "-c", "pass"]}}))
+    config = Config.defaults(tmp_path)
+    config.data["tools"]["dir"] = str(tools_d)
+    case = Case("Python", "Python", fixtures / "baseline-mini" / "Python", fixtures / "baseline-mini" / "Python" / "ground-truth.json", None, "crypto_showcase.py")
+    work = tmp_path / "work"
+    work.mkdir()
+    adapter = make_adapter(load_specs(config)["configured"], config)
+    res = adapter.run(case, work, adapter.resolve(), tmp_path / "raw", tmp_path / "log.txt")
+    assert res.status == "empty", res.notes
+    written = config.path("tools", "cache_dir") / "configured" / "files" / "conf" / "Python.ini"
+    assert written.read_text() == f"lang=python\nroot={work}\n"
+    bad = make_adapter(load_specs(config)["escaping"], config)
+    with pytest.raises(ValueError, match="outside"):
+        bad.run(case, work, bad.resolve(), tmp_path / "raw2", tmp_path / "log.txt")

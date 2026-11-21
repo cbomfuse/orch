@@ -39,6 +39,20 @@ def _load_ground_truths(manifest: dict, baseline_override: Optional[Path]) -> tu
     return gts, info
 
 
+def reported_tool(cbom, aliases: list) -> Optional[dict]:
+    """The name and version a CBOM gives for the tool that wrote it: ``metadata.tools``, else
+    ``metadata.component`` when its name is one of the tool's aliases (CBOM-Lens names itself there;
+    for other tools that field is the scanned subject, so an unknown name is not taken)."""
+    name, version = cbom.metadata.tool_name, cbom.metadata.tool_version
+    comp = cbom.metadata.component or {}
+    if not name and (comp.get("name") or "").lower() in {str(a).lower() for a in aliases}:
+        name, version = comp["name"], comp.get("version")
+    if not name:
+        return None
+    return {"name": name, "version": version, "format": cbom.format, "specVersion": cbom.metadata.spec_version,
+            "allTools": cbom.metadata.tools}
+
+
 def evaluate_run(run_dir: Path, config: Optional[Config] = None, baseline_override: Optional[Path] = None) -> dict:
     from ..reconcile import Scorecard
     from ..runner import load_manifest
@@ -82,10 +96,10 @@ def evaluate_run(run_dir: Path, config: Optional[Config] = None, baseline_overri
         ledger.extend(ev.fp_rows)
         coverage.setdefault(tool, {})[gt.language] = status
         runs_out.append({**{k: v for k, v in rec.items() if k != "command"}, "evaluation": ev.stats})
-        if cbom is not None and cbom.metadata.tool_name and tool in tools and not tools[tool].get("reported"):
-            tools[tool]["reported"] = {"name": cbom.metadata.tool_name, "version": cbom.metadata.tool_version,
-                                      "format": cbom.format, "specVersion": cbom.metadata.spec_version,
-                                      "allTools": cbom.metadata.tools}
+        if cbom is not None and tool in tools and not tools[tool].get("reported"):
+            reported = reported_tool(cbom, (tools[tool].get("twocbom") or {}).get("aliases") or [])
+            if reported:
+                tools[tool]["reported"] = reported
 
     doc = {
         "schemaVersion": SCORECARD_SCHEMA_VERSION, "scoringModelVersion": SCORING_MODEL_VERSION,
