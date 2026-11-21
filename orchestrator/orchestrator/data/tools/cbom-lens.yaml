@@ -1,0 +1,69 @@
+# CBOM-Lens (OmniTrust ILM) -- scans filesystems, container images and network ports for certificates, keys,
+# secrets (gitleaks rules) and the algorithms they use, and writes a CycloneDX 1.6 or 1.7 CBOM.  Like
+# cbomkit-theia it reads files, not source code.
+#
+# It is driven by a config file, written by `files:` before each run: a manual one-shot scan of the case
+# workspace only -- containers, ports and the registry stay off -- with the CBOM on stdout and logs on
+# stderr, hence `capture_stdout`.  The workspace is named in `paths`: cbom-lens replaces an absent path list
+# by the directory of the config file, not by the working directory.  CBOM 1.6, not 1.7: 1.7 output drops
+# signatureAlgorithmRef / subjectPublicKeyRef / algorithmRef for relatedCryptographicAssets, which the
+# normaliser does not read.  CBOMLENSCONFIG takes precedence over --config, so it is set to the same file.
+#
+# No container image is published, so the release is built from source the way upstream builds it: a
+# shallow checkout of the release commit, then `go build ./cmd/cbom-lens` with the release builds' flags
+# (the version shows in `cbom-lens version`; CBOMs carry the Go module version).  `go install module@version`
+# does not work: cbom-lens's go.mod excludes dependency versions with known CVEs, and `go install` refuses
+# a module whose go.mod has exclude or replace directives.  The steps are idempotent, so a re-run reuses
+# the checkout.  CBOM-Lens names itself in metadata.component, not metadata.tools; the orchestrator reads
+# it from there because the name is one of the aliases below.  In 1.1.1 a scan that fails leaves `run` waiting instead of exiting, so a run
+# that fails shows up as a timeout after timeout_seconds.
+id: cbom-lens
+name: CBOM-Lens
+repo: https://github.com/OmniTrustILM/cbom-lens
+description: >-
+  Certificates, keys, secrets and their algorithms in filesystems, container images and on network ports
+  (OmniTrust ILM).  It does not analyse source code, so on a source corpus it can only find embedded key
+  material and credentials; read its scores per asset type.
+versioning:
+  strategy: release          # newest GitHub release; tags have no "v" (1.1.1)
+launcher: local
+files:
+  cbom-lens.yaml: |
+    # Written by cbom-orchestrator before each run (see data/tools/cbom-lens.yaml).
+    version: 0
+    service:
+      mode: manual           # one scan, then exit
+      log: stderr            # the CBOM alone goes to stdout
+    filesystem:
+      enabled: true
+      paths: ['{workdir}']   # the case workspace (no paths would mean this file's directory)
+    cbom:
+      version: "1.6"
+local:
+  # git and Go on PATH; GOTOOLCHAIN=auto fetches the Go release cbom-lens's go.mod requires.  The checkout and
+  # the module and build caches stay in {cache}.
+  install:
+    - ["git", "init", "--quiet", "{cache}/{version}/src"]
+    - ["git", "-C", "{cache}/{version}/src", "fetch", "--quiet", "--depth", "1",
+       "https://github.com/OmniTrustILM/cbom-lens", "{commit}"]
+    - ["git", "-C", "{cache}/{version}/src", "checkout", "--quiet", "--force", "--detach", "FETCH_HEAD"]
+    - ["go", "build", "-C", "{cache}/{version}/src", "-trimpath", "-ldflags=-s -w -X main.version={version}",
+       "-o", "{cache}/{version}/bin/", "./cmd/cbom-lens"]
+  check: ["{cache}/{version}/bin/cbom-lens", "version"]
+  command: ["{cache}/{version}/bin/cbom-lens", "run", "--config", "{files}/cbom-lens.yaml"]
+  env:
+    CBOMLENSCONFIG: "{files}/cbom-lens.yaml"
+    GOPATH: "{cache}/go"
+    GOCACHE: "{cache}/go-build"
+    GOFLAGS: "-modcacherw"   # keeps the module cache deletable
+    GOTOOLCHAIN: auto
+    CGO_ENABLED: "0"         # how the release binaries are built
+output: cbom.cbom-lens.json  # written by the orchestrator from cbom-lens's stdout
+capture_stdout: true
+format: cyclonedx
+languages:
+  "*": any                   # language-agnostic: every case, including languages added to the corpus later
+timeout_seconds: 300
+twocbom:
+  aliases: [cbom-lens, cbom lens, cbomlens, omnitrust cbom-lens, OmniTrustILM/cbom-lens]
+  detection_method: static-binary   # artefact scanner, like cbomkit-theia in 2CBOM's knowledge/tools.json

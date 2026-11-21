@@ -11,6 +11,8 @@ from orchestrator.normalize import read_cbom, read_cbom_file
     ("cryptobom-forge-cdx16.json", "cyclonedx", "cryptobom-forge", 4),
     ("ibm-prestandard-cbom14.json", "ibm-cbom", "IBM Research cbom-scanner", 5),
     ("pqc-scanner-cdx17.json", "cyclonedx", "cbomkit-theia", 9),
+    ("cryptoscan-python-cdx16.json", "cyclonedx", "CSNP CryptoScan", 25),     # real CryptoScan 1.5.0 output
+    ("cbom-lens-golden-cdx16.json", "cyclonedx", None, 27),                  # CBOM-Lens names itself in metadata.component
 ])
 def test_reads_every_dialect(fixtures: Path, name, fmt, tool, n):
     norm = read_cbom_file(fixtures / "cboms" / name)

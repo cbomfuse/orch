@@ -37,6 +37,9 @@ class ToolSpec:
     local: dict = field(default_factory=dict)
     languages: dict = field(default_factory=dict)
     output: str = "cbom.json"
+    capture_stdout: bool = False             # the tool prints its CBOM on stdout; it is saved as `output`
+    ok_exit_codes: list = field(default_factory=lambda: [0])   # e.g. [0, 1] for a tool that exits 1 on findings
+    files: dict = field(default_factory=dict)  # name -> content, written to {files} before each run (config files)
     format: str = "auto"
     timeout_seconds: Optional[int] = None
     twocbom: dict = field(default_factory=dict)
@@ -57,14 +60,18 @@ class ToolSpec:
         spec = cls(**kwargs)
         spec.raw = data
         spec.source = source
-        for k in ("versioning", "docker", "local", "languages", "twocbom", "options"):
+        for k in ("versioning", "docker", "local", "languages", "twocbom", "options", "files"):
             if getattr(spec, k) is None:
                 setattr(spec, k, {})
         return spec
 
     def language_entry(self, case: Case) -> Optional[dict]:
-        """The per-language configuration for a case (by corpus language or by case directory name)."""
-        for key in (case.language, case.id, case.language.lower(), case.id.lower()):
+        """The per-language configuration for a case (by corpus language or by case directory name).
+
+        ``"*"`` matches any case that has no entry of its own -- for language-agnostic tools such as
+        file and image scanners, so that new corpus languages are scanned rather than skipped.
+        """
+        for key in (case.language, case.id, case.language.lower(), case.id.lower(), "*"):
             if key in self.languages:
                 entry = self.languages[key]
                 if entry is None:
@@ -192,10 +199,16 @@ class ToolAdapter(ABC):
         self.launcher = self._pick_launcher()
 
     def _pick_launcher(self) -> str:
+        """``tools.default_launcher`` (``--launcher``) applies to the tools that define that launcher:
+        ``--launcher local`` leaves a Docker-only tool on Docker, ``--launcher docker`` a local-only one local."""
+        own = self.spec.launcher or "docker"
         forced = self.config.get("tools", "default_launcher")
-        if forced:
-            return str(forced)
-        return self.spec.launcher or "docker"
+        if not forced:
+            return own
+        forced = str(forced)
+        if forced in ("docker", "local") and forced != own and not getattr(self.spec, forced):
+            return own
+        return forced
 
     @property
     def id(self) -> str:
@@ -210,7 +223,8 @@ class ToolAdapter(ABC):
     def variables(self, version: Optional[ToolVersion] = None, case: Optional[Case] = None, workdir: Optional[Path] = None,
                   extra: Optional[dict] = None) -> dict:
         v = {
-            "tool": self.spec.id, "cache": str(self.cache_dir), "home": str(Path.home()),
+            "tool": self.spec.id, "cache": str(self.cache_dir), "files": str(self.cache_dir / "files"),
+            "home": str(Path.home()),
             "platform": host_platform(), "uid": getattr(os, "getuid", lambda: 0)(), "gid": getattr(os, "getgid", lambda: 0)(),
         }
         if version is not None:

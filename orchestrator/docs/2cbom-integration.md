@@ -22,6 +22,18 @@ orchestrator export twocbom latest --out /path/to/2cbom/twocbom/knowledge/tools.
 Because this is the same schema, nothing else in 2CBOM changes; the merge becomes reproducible
 against a stated benchmark instead of hand-set numbers.
 
+`trust` is a single number over the whole corpus, so it is only meaningful for tools the corpus
+exercises.  `cbomkit-theia` scans certificates, keys and configuration files while the baseline is
+source code, so its overall score — and the `trust` exported from it — mostly counts assets it is not
+built to find.  Until the baseline contains such artefacts, use its per-category priors
+(`assetType=certificate`, `assetType=related-crypto-material`) through `reconcile()`, or keep 2CBOM's
+hand-set `cbomkit-theia` entry when you replace `tools.json`.  The same holds for `cbom-lens`, which also
+scans files rather than source code.
+
+2CBOM's `extract_tool` reads only `metadata.tools`; CBOM-Lens names itself in `metadata.component`, so
+2CBOM sees its CBOMs as `unknown` until `extract_tool` also accepts a `metadata.component` whose name is a
+known alias — the rule the orchestrator applies to record CBOM-Lens's self-reported version.
+
 ## 2. Category-aware reconciliation (a rule-level hook)
 
 `tools.json` carries one trust number per tool.  The scorecard knows that CBOMkit may be excellent
@@ -54,7 +66,7 @@ r.explanation    # human-readable evidence trail
 
 | 2CBOM | orchestrator |
 |---|---|
-| `Source.tool` (after alias resolution) | `tool_a` / `tool_b` — the spec ids (`cbomkit`, `cdxgen`, `cryptobom-forge`) |
+| `Source.tool` (after alias resolution) | `tool_a` / `tool_b` — the spec ids (`cbomkit`, `cdxgen`, `cryptobom-forge`, `cbomkit-theia`, `cryptoscan`, `cbom-lens`) |
 | asset type of the canonical asset | `assetType` facet |
 | `primitive` / material `type` / protocol `type` | `subtype` facet |
 | descriptor `family` | `family` facet (lexicon spelling: `aes`, `rsa`, `sha2`, `ml-kem`, …) |
@@ -94,7 +106,12 @@ decision rests on.  Keep `undecided` results neutral so the existing order still
 ## 3. Versioning discipline
 
 * The scorecard's `scoringModelVersion` changes when the matching/scoring rules change; 2CBOM should
-  refuse priors with a version it does not expect.
+  refuse priors with a version it does not expect.  Version 1.1 changed matching (artifact cases,
+  certificate identity) but not the ledger rows or the aggregation 2CBOM repeats, so a 2CBOM that
+  reads 1.0 reads 1.1 once it lists the version.
+* Findings in certificate, key, keystore and secret files belong to the `Artifacts` language of the
+  corpus; map their file extensions (`.pem`, `.crt`, `.der`, `.p12`, `.jks`, `.key`, `.env`, `.tf`, …) to it
+  so the reliability measured there applies.
 * Every reconciliation answer carries `toolVersions`.  If the CBOM being merged was produced by a
   different version of a tool than the one benchmarked, 2CBOM can downgrade the confidence or warn —
   the self-reported version in the CBOM's `metadata.tools` is exactly what the orchestrator stores

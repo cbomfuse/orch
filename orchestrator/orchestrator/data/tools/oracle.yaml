@@ -6,7 +6,7 @@ repo: null
 adapter: orchestrator.tools.oracle:OracleAdapter
 description: Replays the corpus' own cbom.cdx.json; a perfect tool for self-tests.
 launcher: local
-languages: {Python: python, Java: java, Go: go, TypeScript: typescript, C#: csharp}
+languages: {Python: python, Java: java, Go: go, TypeScript: typescript, C#: csharp, Artifacts: artifacts}
 twocbom:
   aliases: [oracle]
   detection_method: manual

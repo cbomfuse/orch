@@ -1,0 +1,11 @@
+$ go install '-ldflags=-X main.version=1.1.1' github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b
+# cwd=/home/amin/workspace/orch/.orchestrator/cache/cbom-lens exit=1 timed_out=False duration=17.82s
+--- stderr ---
+go: downloading github.com/OmniTrustILM/cbom-lens v0.0.0-20261018171350-862a35d5fa25
+go: github.com/OmniTrustILM/cbom-lens@v0.0.0-20261018171350-862a35d5fa25 requires go >= 1.26.9; switching to go1.26.11
+go: downloading go1.26.11 (linux/amd64)
+go: github.com/OmniTrustILM/cbom-lens/cmd/cbom-lens@862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b (in github.com/OmniTrustILM/cbom-lens@v0.0.0-20261018171350-862a35d5fa25):
+	The go.mod file for the module providing named packages contains one or
+	more exclude directives. It must not contain directives that would cause
+	it to be interpreted differently than if it were the main module.
+

@@ -121,7 +121,7 @@ _ATOMS: list[tuple[str, str, Optional[str]]] = [
     (r"kbkdf|sp800[-_ ]?108", "family", "kbkdf"),
     (r"sha3[-_ ]?(224|256|384|512)", "hash", "sha3-{1}"),
     (r"sha[-_ ]?3(?![\d])", "family", "sha3"),
-    (r"shake[-_ ]?(128|256)", "hash", "shake-{1}"),
+    (r"shake[-_ ]?(128|256)?", "hash", "shake-{1}"),
     (r"keccak[-_ ]?(224|256|384|512)?", "hash", "keccak-{1}"),
     (r"sha[-_ ]?512[/_-]?(224|256)", "hash", "sha2-512/{1}"),
     (r"sha[-_ ]?(224|256|384|512)", "hash", "sha2-{1}"),
@@ -175,6 +175,7 @@ _ATOMS: list[tuple[str, str, Optional[str]]] = [
     (r"gmac", "family", "gmac"),
     (r"siphash", "family", "siphash"),
     (r"(?<![a-z])ec(?![a-z])", "family", "ec"),
+    (r"(?<![a-z])ecc(?![a-z])", "family", "ec"),               # "elliptic-curve cryptography", e.g. CryptoScan
     (r"csprng|securerandom|secure[-_ ]?random|drbg|urandom|getrandom|randombytes|random[-_ ]?bytes|randomnumber(?:generator)?|random[-_ ]?number|systemrandom|digestrandomgenerator|random[-_ ]?generator|(?<![a-z])(?:rng|prng|rand|random)(?![a-z])",
      "family", "csprng"),
     (r"gcm[-_ ]?siv", "mode", "gcm-siv"),

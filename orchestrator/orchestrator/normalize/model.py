@@ -53,6 +53,7 @@ class ToolMetadata:
     tool_name: Optional[str] = None
     tool_version: Optional[str] = None
     tools: list = field(default_factory=list)
+    component: Optional[dict] = None       # metadata.component (type, name, version): usually the scanned subject
     bom_format: Optional[str] = None
     spec_version: Optional[str] = None
     timestamp: Optional[str] = None

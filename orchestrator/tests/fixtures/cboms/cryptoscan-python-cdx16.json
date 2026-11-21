@@ -1,0 +1,902 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:14987243-6c2d-4259-9a5d-67146080d6ab",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-11-21T01:14:15Z",
+    "tools": [
+      {
+        "vendor": "CSNP",
+        "name": "CryptoScan",
+        "version": "1.5.0"
+      }
+    ],
+    "component": {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-inventory-summary",
+      "name": "Cryptographic Inventory Summary",
+      "description": "Migration Readiness: 27.6% (CRITICAL)"
+    }
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-md5-0",
+      "name": "MD5",
+      "description": "MD5 detected. MD5 is cryptographically broken with practical collision attacks.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 100,
+            "symbol": "md5"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 101,
+            "symbol": "MD5"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-rsa-1",
+      "name": "RSA",
+      "description": "RSA algorithm detected. RSA is vulnerable to Shor's algorithm and will be broken by cryptographically relevant quantum computers.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "pke"
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 31,
+            "symbol": "rsa"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 234,
+            "symbol": "rsa"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 244,
+            "symbol": "RSA-3072"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 252,
+            "symbol": "RSA-3072"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 257,
+            "symbol": "RSA-3072"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-sha-1-2",
+      "name": "SHA-1",
+      "description": "SHA-1 detected. SHA-1 has practical collision attacks (SHAttered) and is deprecated.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 102,
+            "symbol": "sha1"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 103,
+            "symbol": "sha1"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 104,
+            "symbol": "SHA-1"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-3des-3",
+      "name": "3DES",
+      "description": "3DES detected. 3DES is deprecated by NIST and provides only 112-bit security.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 229,
+            "symbol": "3DES"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-ecc-4",
+      "name": "ECC",
+      "description": "Elliptic curve cryptography detected. ECC is vulnerable to Shor's algorithm on quantum computers.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "other"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 262,
+            "symbol": "SECP256R1"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 263,
+            "symbol": "ECDSA"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 264,
+            "symbol": "ECDSA"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 265,
+            "symbol": "ECDSA"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 274,
+            "symbol": "Ed25519"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 290,
+            "symbol": "SECP256R1"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 291,
+            "symbol": "SECP256R1"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 292,
+            "symbol": "ECDH"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 293,
+            "symbol": "ECDH"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 294,
+            "symbol": "ECDH"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 320,
+            "symbol": "SECP256R1"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 337,
+            "symbol": "ECDSA"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-rsa,-ecc,-aes,-chacha20-5",
+      "name": "RSA, ECC, AES, ChaCha20",
+      "description": "Python cryptographic recipes and primitives (Algorithms: RSA, ECC, AES, ChaCha20)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "stream-cipher",
+          "classicalSecurityLevel": 256
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "requirements.txt",
+            "line": 1,
+            "symbol": "cryptography"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-self-signed-certificate-6",
+      "name": "Self-Signed Certificate",
+      "description": "Self-signed certificate usage detected. Acceptable for development but not production.",
+      "cryptoProperties": {
+        "assetType": "certificate"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 319,
+            "symbol": "self_signed"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 340,
+            "symbol": "self-signed"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 359,
+            "symbol": "self_signed"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-argon2-7",
+      "name": "Argon2",
+      "description": "Argon2 detected (RFC 9106). Password Hashing Competition winner. Recommended for password hashing.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kdf"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 22,
+            "symbol": "argon2"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 155,
+            "symbol": "Argon2id"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-bcrypt-8",
+      "name": "bcrypt",
+      "description": "bcrypt detected. Industry-standard password hashing function.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kdf"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 23,
+            "symbol": "bcrypt"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 160,
+            "symbol": "bcrypt"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 161,
+            "symbol": "bcrypt"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 162,
+            "symbol": "bcrypt"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 163,
+            "symbol": "bcrypt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-aes-9",
+      "name": "AES",
+      "description": "AES detected. AES-256 provides adequate quantum resistance. AES-128 security is reduced to 64-bit against Grover's algorithm.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "classicalSecurityLevel": 256
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 24,
+            "symbol": "AES"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 34,
+            "symbol": "AESGCM"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 168,
+            "symbol": "AESGCM"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 172,
+            "symbol": "AES-256-GCM"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 192,
+            "symbol": "AES"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 198,
+            "symbol": "AES-256-CBC"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 205,
+            "symbol": "AES"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 207,
+            "symbol": "AES-128-ECB"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 214,
+            "symbol": "AES"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 216,
+            "symbol": "AES"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 218,
+            "symbol": "AES-256-CTR"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-sha-3-10",
+      "name": "SHA-3",
+      "description": "SHA-3 hash function detected (FIPS 202). NIST-approved alternative to SHA-2.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 25,
+            "symbol": "SHA3_256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 92,
+            "symbol": "SHA3-256"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-hkdf-11",
+      "name": "HKDF",
+      "description": "HKDF detected (SP 800-56C). NIST-approved KDF for high-entropy inputs.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kdf"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 35,
+            "symbol": "hkdf"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 121,
+            "symbol": "hkdf"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 127,
+            "symbol": "HKDF"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 278,
+            "symbol": "hkdf"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 279,
+            "symbol": "hkdf"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 298,
+            "symbol": "HKDF"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-scrypt-12",
+      "name": "scrypt",
+      "description": "scrypt detected (RFC 7914). Memory-hard password-based KDF.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kdf"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 36,
+            "symbol": "scrypt"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 140,
+            "symbol": "Scrypt"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 141,
+            "symbol": "scrypt"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-sha-2-13",
+      "name": "SHA-2",
+      "description": "SHA-2 family hash detected. SHA-256 security is reduced to 128-bit against Grover's algorithm, which remains secure.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 86,
+            "symbol": "SHA-256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 91,
+            "symbol": "SHA-512"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 115,
+            "symbol": "hashlib.sha256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 116,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 122,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 127,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 133,
+            "symbol": "sha256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 135,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 238,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 239,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 247,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 250,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 251,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 255,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 256,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 263,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 264,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 278,
+            "symbol": "SHA256"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 332,
+            "symbol": "SHA256"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-blake2-14",
+      "name": "BLAKE2",
+      "description": "BLAKE2 detected (RFC 7693). Fast, secure hash function. Not NIST-approved but widely used.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 93,
+            "symbol": "BLAKE2b"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 95,
+            "symbol": "BLAKE2b-512"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-hmac-sha2-15",
+      "name": "HMAC-SHA2",
+      "description": "HMAC with SHA-2 detected. NIST-approved (FIPS 198-1). Quantum-partial - security reduced by Grover's algorithm.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "mac"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 116,
+            "symbol": "HMAC-SHA256"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-pbkdf2-16",
+      "name": "PBKDF2",
+      "description": "PBKDF2 detected (SP 800-132). NIST-approved password-based KDF.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kdf"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 132,
+            "symbol": "pbkdf2_hmac"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 135,
+            "symbol": "PBKDF2"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-chacha20-poly1305-17",
+      "name": "ChaCha20-Poly1305",
+      "description": "ChaCha20-Poly1305 AEAD detected (RFC 8439). Fast, secure authenticated encryption.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "mac",
+          "classicalSecurityLevel": 256
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 179,
+            "symbol": "ChaCha20_Poly1305"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 181,
+            "symbol": "ChaCha20_Poly1305"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 183,
+            "symbol": "ChaCha20-Poly1305"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-poly1305-18",
+      "name": "Poly1305",
+      "description": "Poly1305 one-time MAC detected (RFC 8439). Used with ChaCha20 for AEAD.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "mac"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 183,
+            "symbol": "Poly1305"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-ml-kem-19",
+      "name": "ML-KEM",
+      "description": "ML-KEM (FIPS 203) post-quantum key encapsulation detected. This is quantum-safe.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kem",
+          "nistQuantumSecurityLevel": 1
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 31,
+            "symbol": "mlkem"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 303,
+            "symbol": "mlkem"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 307,
+            "symbol": "ML-KEM-768"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-hardcoded-key-size-20",
+      "name": "Hardcoded Key Size",
+      "description": "Hardcoded key size detected. Review to ensure adequate security level.",
+      "cryptoProperties": {
+        "assetType": "algorithm"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 234,
+            "symbol": "key_size=3072"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-shake-21",
+      "name": "SHAKE",
+      "description": "SHAKE XOF detected (FIPS 202). NIST-approved extendable output function. SHAKE256 is quantum-safe.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash",
+          "nistQuantumSecurityLevel": 1
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 109,
+            "symbol": "shake_128"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 110,
+            "symbol": "SHAKE128"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-ml-dsa-22",
+      "name": "ML-DSA",
+      "description": "ML-DSA (FIPS 204) post-quantum digital signature detected. This is quantum-safe.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "nistQuantumSecurityLevel": 1
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 312,
+            "symbol": "mldsa"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 315,
+            "symbol": "ML-DSA-65"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-certificate-subject/issuer-23",
+      "name": "Certificate Subject/Issuer",
+      "description": "Certificate subject or issuer information handling detected.",
+      "cryptoProperties": {
+        "assetType": "certificate"
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 325,
+            "symbol": "subject_name"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 326,
+            "symbol": "issuer_name"
+          }
+        ]
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto-tls-24",
+      "name": "TLS",
+      "description": "TLS 1.2/1.3 detected. TLS 1.3 cipher suites using ECDHE are quantum-vulnerable for key exchange.",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "other"
+        }
+      },
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "crypto_showcase.py",
+            "line": 346,
+            "symbol": "TLSv1_3"
+          },
+          {
+            "location": "crypto_showcase.py",
+            "line": 347,
+            "symbol": "TLSv1_3"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -70,7 +70,8 @@ def render_report(doc: dict) -> str:
         for c in cases:
             st = c.get("stats") or {}
             by = st.get("byType") or {}
-            rows.append([c["id"], c.get("language"), f"`{c.get('sourceFile')}`", st.get("assets"), by.get("algorithm", 0),
+            program = f"`{c['sourceFile']}`" if c.get("sourceFile") else "files"   # artifact cases have no program
+            rows.append([c["id"], c.get("language"), program, st.get("assets"), by.get("algorithm", 0),
                          by.get("related-crypto-material", 0), by.get("certificate", 0) + by.get("protocol", 0),
                          by.get("library", 0), st.get("occurrences"), st.get("nonAssetMentions")])
         lines.append("")

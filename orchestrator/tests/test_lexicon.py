@@ -17,6 +17,9 @@ from orchestrator.normalize.lexicon import (descriptor_from_fields, normalize_fa
     ("SHA-256", "sha2-256", "hash"),
     ("SHA3-256", "sha3-256", "hash"),
     ("SHAKE128", "sha3-128", "xof"),
+    ("SHAKE", "sha3", "xof"),                     # family only, as CryptoScan names it
+    ("ECC", "ec", None),                          # generic elliptic-curve family, like "EC"
+    ("ECC P-256", "ec-p256", None),
     ("ChaCha20-Poly1305", "chacha20", "ae"),
     ("DESede/CBC/PKCS5Padding", "3des-cbc-pkcs7", "block-cipher"),
     ("3DES-CBC-PKCS7 (3-key TDEA)", "3des-cbc-pkcs7", "block-cipher"),

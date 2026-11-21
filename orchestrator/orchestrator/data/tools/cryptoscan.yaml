@@ -1,0 +1,46 @@
+# CryptoScan (CSNP, part of the QRAMM toolkit) -- a pattern scanner for cryptography in source code and
+# configuration files that rates each finding's quantum risk and writes, among other formats, a CycloneDX 1.6
+# CBOM.
+#
+# It runs as `scan --format cbom --include-quantum-safe` rather than as the `cbom` command: both run the same
+# scan, but without --include-quantum-safe the SHA-2 and AES findings are left out (CryptoScan rates them
+# PARTIAL), and `cbom` does not take that flag.  `scan` exits 1 when a finding is CRITICAL, hence
+# ok_exit_codes; an error exits 1 too but writes no CBOM, which is still `failed`.  --no-config keeps a
+# .cryptoscan.yaml in a directory above the workspace out of the run.
+#
+# No container image is published, so the release is built with `go install`, the install method its README
+# gives.  The version ldflag is the one the release binaries carry, so CBOMs report e.g. "1.5.0".
+id: cryptoscan
+name: CryptoScan
+repo: https://github.com/csnp/cryptoscan
+description: >-
+  Regular-expression scanner for cryptography in source code and configuration files, with quantum-risk
+  ratings (CSNP QRAMM toolkit).  It mostly names algorithm families (AES, SHA-2, ML-KEM) rather than
+  parameter sets.
+versioning:
+  strategy: release          # newest GitHub release; falls back to the highest tag
+launcher: local
+local:
+  # Go >= 1.21 on PATH; v1.1.0 and later (earlier releases declare github.com/csnp/qramm-cryptoscan).
+  # Module and build caches stay in {cache}.
+  install:
+    - ["go", "install", "-ldflags=-X main.version={version}", "github.com/csnp/cryptoscan/cmd/cryptoscan@{commit}"]
+  check: ["{cache}/{version}/bin/cryptoscan", "version"]
+  command: ["{cache}/{version}/bin/cryptoscan", "scan", "{workdir}", "--format", "cbom", "--include-quantum-safe",
+            "--no-config", "--output", "{output}"]
+  env:
+    GOBIN: "{cache}/{version}/bin"
+    GOPATH: "{cache}/go"
+    GOCACHE: "{cache}/go-build"
+    GOFLAGS: "-modcacherw"   # keeps the module cache deletable
+    GOTOOLCHAIN: auto
+    CGO_ENABLED: "0"         # how the release binaries are built
+output: cbom.cryptoscan.json
+ok_exit_codes: [0, 1]        # 1: a CRITICAL finding (scan's default gate)
+format: cyclonedx
+languages:
+  "*": any                   # pattern-based: every case, including languages added to the corpus later
+timeout_seconds: 900
+twocbom:
+  aliases: [cryptoscan, csnp cryptoscan, CSNP/cryptoscan, qramm cryptoscan, qramm-cryptoscan]
+  detection_method: static-source

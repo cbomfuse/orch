@@ -82,7 +82,10 @@ class Docker:
     def run(self, image: str, args: Sequence[str], *, mounts: Mapping[str, str], env: Mapping[str, str],
             workdir: Optional[str] = None, user: Optional[str] = None, timeout: Optional[float] = None,
             log_path: Optional[Path] = None, entrypoint: Optional[str] = None,
-            extra_args: Optional[Sequence[str]] = None, network: Optional[str] = None) -> CommandResult:
+            extra_args: Optional[Sequence[str]] = None, network: Optional[str] = None,
+            stdout_path: Optional[Path] = None) -> CommandResult:
+        """``docker run --rm`` without a TTY, so the container's stdout and stderr stay separate;
+        ``stdout_path`` saves stdout to a host file (see :func:`~orchestrator.process.run_command`)."""
         argv = [self.binary, "run", "--rm"]
         argv += self.extra_args
         argv += list(extra_args or [])
@@ -99,4 +102,4 @@ class Docker:
             argv += ["--entrypoint", entrypoint]
         argv.append(image)
         argv += list(args)
-        return run_command(argv, timeout=timeout, log_path=log_path)
+        return run_command(argv, timeout=timeout, log_path=log_path, stdout_path=stdout_path)

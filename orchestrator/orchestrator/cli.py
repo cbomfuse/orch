@@ -75,7 +75,7 @@ def cmd_baseline(args) -> int:
     cases = discover_cases(co.path, config)
     if args.baseline_cmd == "cases":
         for c in cases:
-            print(f"{c.id:12} {c.language:12} {c.source_file}")
+            print(f"{c.id:12} {c.language:12} {c.source_file or '(artifact files)'}")
         return 0
     info = {"checkout": co.to_dict(), "cases": []}
     for c in cases:
@@ -94,7 +94,8 @@ def cmd_tools(args) -> int:
         enabled = set(config.get("tools", "enabled", default=[]) or [])
         for tid, spec in sorted(specs.items()):
             flag = "*" if tid in enabled else " "
-            print(f"{flag} {tid:18} {spec.launcher:7} {', '.join(sorted(spec.languages)):40} {spec.repo or '-'}  [{spec.source}]")
+            langs = ", ".join("(any)" if lang == "*" else lang for lang in sorted(spec.languages))
+            print(f"{flag} {tid:18} {spec.launcher:7} {langs:40} {spec.repo or '-'}  [{spec.source}]")
         print("\n* = enabled in configuration")
         return 0
     if args.tools_cmd == "show":

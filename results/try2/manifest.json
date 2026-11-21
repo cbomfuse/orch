@@ -1,0 +1,249 @@
+{
+  "runId": "try2",
+  "startedAt": "2026-11-21T02:50:26Z",
+  "finishedAt": "2026-11-21T02:51:50Z",
+  "host": {
+    "hostname": "msi",
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "orchestrator": "0.1.0"
+  },
+  "config": {
+    "baseline": {
+      "repo": "https://github.com/cbomfuse/baseline.git",
+      "ref": "main",
+      "path": ".orchestrator/baseline",
+      "include_cases": [],
+      "exclude_cases": [],
+      "exclude_dirs": [
+        "_tooling"
+      ],
+      "ground_truth_file": "ground-truth.json",
+      "reference_cbom_file": "cbom.cdx.json"
+    },
+    "tools": {
+      "dir": "tools.d",
+      "enabled": [
+        "cbomkit",
+        "cdxgen",
+        "cryptobom-forge",
+        "cbomkit-theia",
+        "cryptoscan",
+        "cbom-lens"
+      ],
+      "pins": {},
+      "default_launcher": null,
+      "cache_dir": ".orchestrator/cache"
+    },
+    "results": {
+      "dir": "results",
+      "keep_workspaces": false,
+      "latest_symlink": true
+    },
+    "github": {
+      "api": "https://api.github.com",
+      "token_env": "GITHUB_TOKEN",
+      "allow_prerelease": false
+    },
+    "docker": {
+      "binary": "docker",
+      "pull_policy": "missing",
+      "user": "current",
+      "extra_args": []
+    },
+    "run": {
+      "timeout_seconds": 1800,
+      "keep_going": true
+    },
+    "scoring": {
+      "weights": {
+        "recall": 0.35,
+        "precision": 0.15,
+        "completeness": 0.15,
+        "correctness": 0.25,
+        "locality": 0.1
+      },
+      "line_tolerance": 1,
+      "min_support": 5,
+      "min_support_head_to_head": 3,
+      "strength_threshold": 0.8,
+      "strength_min_support": 5,
+      "treat_failed_as_zero": false,
+      "undecided_below": 0.6,
+      "backoff_relevance_decay": 0.15,
+      "shrinkage_prior_weight": 5,
+      "attribute_weights": {}
+    },
+    "export": {
+      "twocbom": {
+        "trust_floor": 20,
+        "trust_ceiling": 95,
+        "default_trust": 50
+      }
+    }
+  },
+  "baseline": {
+    "repo": "https://github.com/cbomfuse/baseline.git",
+    "ref": "main",
+    "commit": "ffd18edf8d55d9df8205d142191b570982d2f60f",
+    "describe": "ffd18ed",
+    "path": "/home/amin/workspace/orch/.orchestrator/baseline",
+    "synced": true,
+    "notes": [],
+    "cases": [
+      {
+        "id": "Python",
+        "language": "Python",
+        "dir": "/home/amin/workspace/orch/.orchestrator/baseline/Python",
+        "groundTruth": "/home/amin/workspace/orch/.orchestrator/baseline/Python/ground-truth.json",
+        "referenceCbom": "/home/amin/workspace/orch/.orchestrator/baseline/Python/cbom.cdx.json",
+        "sourceFile": "crypto_showcase.py"
+      }
+    ]
+  },
+  "tools": {
+    "cbom-lens": {
+      "tool": "cbom-lens",
+      "name": "CBOM-Lens",
+      "repo": "https://github.com/OmniTrustILM/cbom-lens",
+      "strategy": "release",
+      "tag": "1.1.1",
+      "version": "1.1.1",
+      "commit": "862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b",
+      "resolved_at": "2026-11-21T02:50:26Z",
+      "source": "api",
+      "url": "https://github.com/OmniTrustILM/cbom-lens/releases/tag/1.1.1",
+      "launcher": "local",
+      "image": null,
+      "image_digest": null,
+      "image_id": null,
+      "reported": null,
+      "components": {
+        "check": "cbom-lens: 1.1.1\ngo:     go1.26.9\ncommit: 862a35d5fa25ac689a6a8d70c7b7b7cc54278f0b\ndate:   2026-10-18T17:13:50Z\ndirty:  false"
+      },
+      "notes": [
+        "release 1.1.1 published 2026-10-19T15:49:12Z"
+      ],
+      "spec": {
+        "id": "cbom-lens",
+        "name": "CBOM-Lens",
+        "repo": "https://github.com/OmniTrustILM/cbom-lens",
+        "description": "Certificates, keys, secrets and their algorithms in filesystems, container images and on network ports (OmniTrust ILM).  It does not analyse source code, so on a source corpus it can only find embedded key material and credentials; read its scores per asset type.",
+        "adapter": "orchestrator.tools.generic:CommandToolAdapter",
+        "versioning": {
+          "strategy": "release"
+        },
+        "launcher": "local",
+        "docker": {},
+        "local": {
+          "install": [
+            [
+              "git",
+              "init",
+              "--quiet",
+              "{cache}/{version}/src"
+            ],
+            [
+              "git",
+              "-C",
+              "{cache}/{version}/src",
+              "fetch",
+              "--quiet",
+              "--depth",
+              "1",
+              "https://github.com/OmniTrustILM/cbom-lens",
+              "{commit}"
+            ],
+            [
+              "git",
+              "-C",
+              "{cache}/{version}/src",
+              "checkout",
+              "--quiet",
+              "--force",
+              "--detach",
+              "FETCH_HEAD"
+            ],
+            [
+              "go",
+              "build",
+              "-C",
+              "{cache}/{version}/src",
+              "-trimpath",
+              "-ldflags=-s -w -X main.version={version}",
+              "-o",
+              "{cache}/{version}/bin/",
+              "./cmd/cbom-lens"
+            ]
+          ],
+          "check": [
+            "{cache}/{version}/bin/cbom-lens",
+            "version"
+          ],
+          "command": [
+            "{cache}/{version}/bin/cbom-lens",
+            "run",
+            "--config",
+            "{files}/cbom-lens.yaml"
+          ],
+          "env": {
+            "CBOMLENSCONFIG": "{files}/cbom-lens.yaml",
+            "GOPATH": "{cache}/go",
+            "GOCACHE": "{cache}/go-build",
+            "GOFLAGS": "-modcacherw",
+            "GOTOOLCHAIN": "auto",
+            "CGO_ENABLED": "0"
+          }
+        },
+        "languages": {
+          "*": "any"
+        },
+        "output": "cbom.cbom-lens.json",
+        "capture_stdout": true,
+        "ok_exit_codes": [
+          0
+        ],
+        "files": {
+          "cbom-lens.yaml": "# Written by cbom-orchestrator before each run (see data/tools/cbom-lens.yaml).\nversion: 0\nservice:\n  mode: manual           # one scan, then exit\n  log: stderr            # the CBOM alone goes to stdout\nfilesystem:\n  enabled: true\n  paths: ['{workdir}']   # the case workspace (no paths would mean this file's directory)\ncbom:\n  version: \"1.6\"\n"
+        },
+        "format": "cyclonedx",
+        "timeout_seconds": 300,
+        "twocbom": {
+          "aliases": [
+            "cbom-lens",
+            "cbom lens",
+            "cbomlens",
+            "omnitrust cbom-lens",
+            "OmniTrustILM/cbom-lens"
+          ],
+          "detection_method": "static-binary"
+        },
+        "options": {},
+        "source": "builtin:cbom-lens.yaml"
+      }
+    }
+  },
+  "runs": [
+    {
+      "tool": "cbom-lens",
+      "toolVersion": "1.1.1",
+      "case": "Python",
+      "language": "Python",
+      "startedAt": "2026-11-21T02:51:50Z",
+      "status": "empty",
+      "output": "raw/cbom-lens/Python/cbom.cbom-lens.json",
+      "exitCode": 0,
+      "durationSeconds": 0.18,
+      "log": "logs/cbom-lens/Python.log",
+      "command": [
+        "/home/amin/workspace/orch/.orchestrator/cache/cbom-lens/1.1.1/bin/cbom-lens",
+        "run",
+        "--config",
+        "/home/amin/workspace/orch/.orchestrator/cache/cbom-lens/files/cbom-lens.yaml"
+      ],
+      "notes": [],
+      "extra": {},
+      "finishedAt": "2026-11-21T02:51:50Z"
+    }
+  ]
+}
