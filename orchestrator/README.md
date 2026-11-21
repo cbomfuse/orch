@@ -5,12 +5,12 @@ ground truth and turns the results into **versioned, per-category reliability pr
 [2CBOM](https://github.com/cbomfuse/2cbom) uses to settle conflicts between tools.
 
 ```
-baseline (ground truth)        tools (newest GitHub release)          2CBOM
-┌───────────────────┐   run    ┌──────────┬────────┬────────────────┐  │
-│ Python Java Go TS │ ───────▶ │ CBOMkit  │ cdxgen │ cryptobom-forge│  │  "A says AES-128-GCM,
-│ C#  …any new case │          └──────────┴────────┴────────────────┘  │   B says AES-256-GCM
-└───────────────────┘   normalise → match → score per category         │   — whom do I trust?"
-                                   │                                   ▼
+baseline (ground truth)        tools (newest GitHub release)                          2CBOM
+┌───────────────────┐   run    ┌──────────┬────────┬────────────────┬───────────────┐  │
+│ Python Java Go TS │ ───────▶ │ CBOMkit  │ cdxgen │ cryptobom-forge│ CBOMkit-theia │  │  "A says AES-128-GCM,
+│ C#  …any new case │          └──────────┴────────┴────────────────┴───────────────┘  │   B says AES-256-GCM
+└───────────────────┘   normalise → match → score per category                         │   — whom do I trust?"
+                                   │                                                   ▼
                        scorecard.json · priors.json · report.md · twocbom/tools.json
                                    │
                         orchestrator reconcile → prefer B, confidence 0.91, tool versions
@@ -41,7 +41,7 @@ The reference CBOM shipped with the corpus scores 1.000 on every case through th
 ## Quick start
 
 ```bash
-pip install -e .                       # Python >= 3.10; needs git; Docker for cbomkit/cdxgen
+pip install -e .                       # Python >= 3.10; needs git; Docker for cbomkit/cdxgen/cbomkit-theia
 orchestrator baseline sync             # clones cbomfuse/baseline into .orchestrator/baseline
 orchestrator tools resolve             # newest versions, no install
 orchestrator run                       # resolve + install + scan all cases + evaluate + export
@@ -90,7 +90,8 @@ of hooking `reconcile()` into 2CBOM's settlement order.
 ## Adding a tool
 
 Usually one YAML file in `tools.d/` — repository, how to pick the version, the Docker image or local
-command, the per-language flag, where the output lands. See [docs/adding-a-tool.md](docs/adding-a-tool.md).
+command, the per-language flag, where the output lands (a file, or stdout as with cbomkit-theia). See
+[docs/adding-a-tool.md](docs/adding-a-tool.md).
 Tools that need a pipeline (cryptobom-forge needs CodeQL first) subclass `ToolAdapter`.
 
 ## Repository layout
@@ -100,7 +101,7 @@ orchestrator/            the package
   baseline.py            corpus checkout, case discovery, ground-truth model
   github.py docker.py    version resolution, downloads, container execution
   tools/                 adapter base, generic YAML adapter, cryptobom-forge pipeline, oracle
-  data/tools/*.yaml      built-in tool specs (cbomkit, cdxgen, cryptobom-forge, oracle, oracle-noisy)
+  data/tools/*.yaml      built-in tool specs (cbomkit, cdxgen, cryptobom-forge, cbomkit-theia, oracle, oracle-noisy)
   normalize/             lexicon + CycloneDX / IBM-CBOM readers
   evaluate/              matcher, attribute comparison, ledger, scoring, pairwise, statistics
   reconcile.py           Scorecard + reconcile()
@@ -108,7 +109,7 @@ orchestrator/            the package
   runner.py cli.py
 tools.d/                 your tool specs (override or add)
 docs/                    architecture, scoring model, output formats, running, 2CBOM integration
-tests/                   73 tests; fixtures include the baseline's Python case and 2CBOM example CBOMs
+tests/                   83 tests; fixtures include the baseline's Python case and 2CBOM example CBOMs
 ```
 
 Documentation: [architecture](docs/architecture.md) · [scoring model](docs/scoring-model.md) ·

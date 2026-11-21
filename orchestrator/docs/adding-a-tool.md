@@ -41,6 +41,7 @@ local:
   cwd: null                             # defaults to the workspace
 
 output: mytool-cbom.json   # relative to the workspace; glob allowed (largest match wins)
+capture_stdout: false      # true: the tool prints its CBOM on stdout, which is saved as `output` (a plain path)
 format: auto               # auto | cyclonedx | ibm-cbom (auto-detection is reliable)
 
 languages:                 # corpus language (or case directory name) -> value of {language}
@@ -49,6 +50,7 @@ languages:                 # corpus language (or case directory name) -> value o
   Go: go
   TypeScript: typescript
   C#: csharp               # unlisted languages run as "unsupported" (recorded, not failed)
+  # "*": any               # language-agnostic tools (file/image scanners): every case without its own entry
 
 timeout_seconds: 1800
 
@@ -80,7 +82,9 @@ twocbom:                   # copied into the exported tools.json
 2. `install` — Docker: pull the rendered image (or the fallback), record digest and id, read OCI
    version labels.  Local: run the install steps in `{cache}`, then the `check` command.
 3. `run` — per case: copy the case directory to a workspace, render env/args, execute (with the
-   timeout), locate the output, copy it to `raw/<id>/<case>/`, classify the status.
+   timeout), locate the output, copy it to `raw/<id>/<case>/`, classify the status.  With
+   `capture_stdout` the output is the tool's stdout (stderr goes to the log); a tool that exits 0
+   without printing anything is `failed`.  `data/tools/cbomkit-theia.yaml` is a complete example.
 4. Evaluation reads the output with the auto-detecting normaliser, so any CycloneDX 1.5–1.7 or IBM
    1.4-cbom-1.0 document works.  Tool names found in `metadata.tools` are added to the 2CBOM aliases.
 

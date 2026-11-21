@@ -42,19 +42,28 @@ def which(binary: str) -> Optional[str]:
 def run_command(argv: Sequence[str], *, cwd: Optional[os.PathLike | str] = None,
                 env: Optional[Mapping[str, str]] = None, timeout: Optional[float] = None,
                 log_path: Optional[os.PathLike | str] = None, input_text: Optional[str] = None,
-                check: bool = False) -> CommandResult:
-    """Run ``argv`` and capture everything.  Never raises on non-zero exit unless ``check``."""
+                check: bool = False, stdout_path: Optional[os.PathLike | str] = None) -> CommandResult:
+    """Run ``argv`` and capture everything.  Never raises on non-zero exit unless ``check``.
+
+    With ``stdout_path`` the child's standard output goes byte-for-byte into that file instead of being
+    captured (for tools that print their CBOM on stdout); the log then records the file and its size.
+    """
     argv = [str(a) for a in argv]
     merged_env = dict(os.environ)
     if env:
         merged_env.update({k: str(v) for k, v in env.items()})
     log.debug("$ %s (cwd=%s)", " ".join(shlex.quote(a) for a in argv), cwd)
+    sink = None
+    if stdout_path:
+        Path(stdout_path).parent.mkdir(parents=True, exist_ok=True)
+        sink = open(stdout_path, "wb")
     start = time.monotonic()
     timed_out = False
     try:
-        proc = subprocess.run(argv, cwd=cwd, env=merged_env, input=input_text, capture_output=True,
+        proc = subprocess.run(argv, cwd=cwd, env=merged_env, input=input_text,
+                              stdout=sink if sink is not None else subprocess.PIPE, stderr=subprocess.PIPE,
                               text=True, timeout=timeout, errors="replace")
-        rc, out, err = proc.returncode, proc.stdout, proc.stderr
+        rc, out, err = proc.returncode, proc.stdout or "", proc.stderr
     except subprocess.TimeoutExpired as exc:
         timed_out = True
         rc = None
@@ -62,14 +71,22 @@ def run_command(argv: Sequence[str], *, cwd: Optional[os.PathLike | str] = None,
         err = (exc.stderr or b"").decode("utf-8", "replace") if isinstance(exc.stderr, bytes) else (exc.stderr or "")
     except FileNotFoundError as exc:
         rc, out, err = 127, "", f"{argv[0]}: not found ({exc})"
+    finally:
+        if sink is not None:
+            sink.close()
     duration = time.monotonic() - start
     result = CommandResult(argv, rc, out, err, duration, timed_out, str(cwd) if cwd else None)
+    if stdout_path:
+        result.extra["stdoutPath"] = str(stdout_path)
+        result.extra["stdoutBytes"] = Path(stdout_path).stat().st_size
     if log_path:
         p = Path(log_path)
         p.parent.mkdir(parents=True, exist_ok=True)
         with open(p, "a", encoding="utf-8") as fh:
             fh.write(f"$ {' '.join(shlex.quote(a) for a in argv)}\n")
             fh.write(f"# cwd={cwd} exit={rc} timed_out={timed_out} duration={duration:.2f}s\n")
+            if stdout_path:
+                fh.write(f"--- stdout -> {stdout_path} ({result.extra['stdoutBytes']} bytes) ---\n")
             if out:
                 fh.write("--- stdout ---\n" + out + ("\n" if not out.endswith("\n") else ""))
             if err:

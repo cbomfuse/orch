@@ -5,8 +5,9 @@
 | Component | Needed for | Notes |
 |---|---|---|
 | Python ≥ 3.10, `git` | everything | `pip install -e .` installs the only dependency (PyYAML) |
-| Docker (or Podman with a `docker` shim) | `cbomkit`, `cdxgen` (default launcher) | images are pulled by release tag; set `docker.pull_policy` |
+| Docker (or Podman with a `docker` shim) | `cbomkit`, `cdxgen`, `cbomkit-theia` (default launcher) | images are pulled by release tag; set `docker.pull_policy` |
 | Node.js ≥ 24 | `cdxgen` with `--launcher local` | installed into `.orchestrator/cache/cdxgen` via npm |
+| Go ≥ 1.21 | `cbomkit-theia` with `--launcher local` | built into `.orchestrator/cache/cbomkit-theia/<version>`; `GOTOOLCHAIN=auto` fetches the Go release theia's `go.mod` requires |
 | ~1 GB disk, Python venv | `cryptobom-forge` | the CodeQL bundle (CLI + query packs) is downloaded once into `.orchestrator/cache/cryptobom-forge/codeql/<version>` |
 | `GITHUB_TOKEN` (optional) | version resolution | lifts the unauthenticated API limit; without it `git ls-remote` is used, which needs no token |
 
@@ -38,14 +39,15 @@ orchestrator normalize <cbom.json> [--verbose]     # see how a file is lifted to
 Newest versions of everything, nightly:
 
 ```bash
-orchestrator -v run            # resolves, pulls/installs, scans 5 cases × 3 tools, evaluates, exports
+orchestrator -v run            # resolves, pulls/installs, scans 5 cases × 4 tools, evaluates, exports
 ```
 
 Reproduce a previous run's versions:
 
 ```bash
 jq '.tools | map_values(.tag // .version)' results/20261105-213000/manifest.json
-orchestrator run --pin cbomkit=v2.3.0 --pin cdxgen=v13.6.0 --pin cryptobom-forge=1.1.0 --pin codeql=codeql-bundle-v2.27.4
+orchestrator run --pin cbomkit=v2.3.0 --pin cdxgen=v13.6.0 --pin cryptobom-forge=1.1.0 --pin codeql=codeql-bundle-v2.27.4 \
+                 --pin cbomkit-theia=v1.1.2
 ```
 
 The baseline changed (new scenario, corrected ground truth): re-score without re-running tools:
@@ -78,6 +80,14 @@ orchestrator run --tool cbomkit --case Java --run-id cbomkit-java --skip-install
   CodeQL repository and are `unsupported` until you add a `queries:` entry) → `cryptobom generate`.
   The forge is installed into a venv from its GitHub tag; its CycloneDX fork is installed over HTTPS
   because the forge's own metadata pins it with a `git+ssh` URL.
+* **cbomkit-theia** — `ghcr.io/cbomkit/cbomkit-theia:<version>` (entrypoint `cbomkit-theia`) with
+  `dir /src`, `--network none` and `HOME=/tmp`; theia prints the CBOM on stdout, which is saved as
+  `cbom.theia.json` (`capture_stdout`).  It scans files, not source code — certificates, keys and
+  other secrets (gitleaks rules), OpenSSL TLS configuration — so it runs on every case whatever the
+  language, and on the current source-only corpus it can only find embedded key material and credentials.
+  Its java.security plugin only re-scores a CBOM given with `--bom` and stays inactive.  CBOMs from the
+  image report version `edge`; the manifest's image digest and OCI version label identify the build.
+  `--launcher local` builds the release with `go install` (v1.1.0 or later).
 
 Edit `orchestrator/data/tools/<tool>.yaml` (or override it in `tools.d/`) to change flags, images or
 queries; `orchestrator tools show <tool>` prints the effective spec.
@@ -102,5 +112,7 @@ queries; `orchestrator tools show <tool>` prints the effective spec.
 * **A tool produced output but the run is `failed`** — see `logs/<tool>/<case>.log`; a non-JSON file
   or a missing output path are the usual causes.  `orchestrator normalize <file>` shows how a file is
   interpreted.
+* **`cbomkit-theia` is `failed` with "the tool wrote nothing to stdout"** — theia logs `Could not scan
+  dir` and still exits 0; the reason is in the stderr part of `logs/cbomkit-theia/<case>.log`.
 * **A language directory is missing from the run** — `baseline.include_cases`/`exclude_cases`, or
   the directory has no `ground-truth.json`.

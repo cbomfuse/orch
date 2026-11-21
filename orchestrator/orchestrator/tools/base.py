@@ -37,6 +37,7 @@ class ToolSpec:
     local: dict = field(default_factory=dict)
     languages: dict = field(default_factory=dict)
     output: str = "cbom.json"
+    capture_stdout: bool = False             # the tool prints its CBOM on stdout; it is saved as `output`
     format: str = "auto"
     timeout_seconds: Optional[int] = None
     twocbom: dict = field(default_factory=dict)
@@ -63,8 +64,12 @@ class ToolSpec:
         return spec
 
     def language_entry(self, case: Case) -> Optional[dict]:
-        """The per-language configuration for a case (by corpus language or by case directory name)."""
-        for key in (case.language, case.id, case.language.lower(), case.id.lower()):
+        """The per-language configuration for a case (by corpus language or by case directory name).
+
+        ``"*"`` matches any case that has no entry of its own -- for language-agnostic tools such as
+        file and image scanners, so that new corpus languages are scanned rather than skipped.
+        """
+        for key in (case.language, case.id, case.language.lower(), case.id.lower(), "*"):
             if key in self.languages:
                 entry = self.languages[key]
                 if entry is None:

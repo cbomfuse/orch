@@ -1,0 +1,57 @@
+# CBOMkit-theia (PQCA / IBM Research) -- the CBOMkit scanner for directories and container images.  It does
+# not analyse source code: its plugins find X.509 certificates, keys and other secrets (gitleaks rules) and
+# the TLS settings in OpenSSL configuration files.  `cbomkit-theia dir <path>` prints a CycloneDX CBOM on
+# stdout and logs on stderr, hence `capture_stdout`.  The java.security plugin only re-scores a CBOM passed
+# with --bom, so it is inactive here: like every generator, theia is scored on its own output.
+#
+# Release tags look like v1.1.2 and the image is tagged with the bare version (1.1.2); `edge` tracks main.
+# The image is built without the version ldflag, so its CBOMs report version "edge" -- the image digest and
+# the OCI version label recorded at install identify the build instead.
+id: cbomkit-theia
+name: CBOMkit-theia
+repo: https://github.com/cbomkit/cbomkit-theia
+description: >-
+  Cryptographic assets in directories and container images: certificates, keys and other secrets, OpenSSL
+  TLS configuration.  It does not analyse source code, so on a source corpus it can only find embedded key
+  material and credentials; read its scores per asset type.
+versioning:
+  strategy: release          # newest GitHub release; falls back to the highest tag
+launcher: docker
+docker:
+  image: ghcr.io/cbomkit/cbomkit-theia:{version}
+  fallback_tag: edge         # used only when the release tag has no image yet
+  mount: /src
+  workdir: /src
+  user: current
+  network: none              # `dir` scans are offline
+  env:
+    HOME: /tmp               # theia creates $HOME/.cbomkit-theia/config.yaml on its first run
+  args: ["dir", "{mount}"]   # the image's entrypoint is the theia binary
+local:
+  # Builds the resolved commit with Go >= 1.21 on PATH (GOTOOLCHAIN=auto fetches the Go release theia's
+  # go.mod asks for); v1.1.0 and later only -- earlier releases declare github.com/IBM/cbomkit-theia.
+  # Module and build caches stay in {cache}.  HOME is per version because theia keeps its plugin list in
+  # $HOME/.cbomkit-theia/config.yaml and never adds a newer release's plugins to an existing file; it also
+  # keeps a personal ~/.cbomkit-theia out of the benchmark.
+  install:
+    - ["go", "install", "-ldflags=-X github.com/cbomkit/cbomkit-theia/scanner.Version={tag}",
+       "github.com/cbomkit/cbomkit-theia@{commit}"]
+  check: ["go", "version", "-m", "{cache}/{version}/bin/cbomkit-theia"]
+  command: ["{cache}/{version}/bin/cbomkit-theia", "dir", "{workdir}"]
+  env:
+    GOBIN: "{cache}/{version}/bin"
+    GOPATH: "{cache}/go"
+    GOCACHE: "{cache}/go-build"
+    GOFLAGS: "-modcacherw"   # keeps the module cache deletable
+    GOTOOLCHAIN: auto
+    CGO_ENABLED: "0"         # the same static build as the published image
+    HOME: "{cache}/{version}"
+output: cbom.theia.json      # written by the orchestrator from theia's stdout
+capture_stdout: true
+format: cyclonedx
+languages:
+  "*": any                   # language-agnostic: every case, including languages added to the corpus later
+timeout_seconds: 1200
+twocbom:
+  aliases: [cbomkit-theia, theia, cbomkit theia, PQCA/cbomkit-theia, IBM/cbomkit-theia]
+  detection_method: static-binary   # as in 2CBOM's knowledge/tools.json
