@@ -75,7 +75,7 @@ def cmd_baseline(args) -> int:
     cases = discover_cases(co.path, config)
     if args.baseline_cmd == "cases":
         for c in cases:
-            print(f"{c.id:12} {c.language:12} {c.source_file}")
+            print(f"{c.id:12} {c.language:12} {c.source_file or '(artifact files)'}")
         return 0
     info = {"checkout": co.to_dict(), "cases": []}
     for c in cases:

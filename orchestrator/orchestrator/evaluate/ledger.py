@@ -34,23 +34,31 @@ def _norm(s: Optional[str]) -> str:
 
 
 def _location_stats(asset, pairs: list, tolerance: int) -> dict:
-    spans = asset.locations()
-    distinct = {(f, s, e) for f, s, e in spans}
+    """Expected = distinct places the asset occurs; matched = those a paired detection pointed at.  Places
+    backed by file-level evidence (artifact files) are matched by a location naming the file when either
+    side has no line, exactly as in the matcher."""
+    distinct = set(asset.spans())
+    file_level = any(fl for _, _, _, fl in distinct)
     matched: set = set()
     reported = 0
     reported_matched = 0
     for p in pairs:
         for occ in p.detection.occurrences:
-            if occ.line is None:
+            if occ.line is None and not (file_level and occ.file):
                 continue
             reported += 1
             lo, hi = occ.line, occ.end_line or occ.line
             hit = False
-            for f, s, e in distinct:
+            for span in distinct:
+                f, s, e, fl = span
                 if occ.file and not match_file(occ.file, f):
                     continue
-                if lo <= e + tolerance and hi >= s - tolerance:
-                    matched.add((f, s, e))
+                if lo is not None and s is not None:
+                    if lo <= e + tolerance and hi >= s - tolerance:
+                        matched.add(span)
+                        hit = True
+                elif fl and occ.file:
+                    matched.add(span)
                     hit = True
             if hit:
                 reported_matched += 1

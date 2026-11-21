@@ -15,6 +15,7 @@ from ..baseline import GTAsset, GroundTruth, purl_key
 from ..normalize.lexicon import (CURVE_ALIASES, descriptor_from_fields, normalize_curve, normalize_mode,
                                  normalize_padding, normalize_primitive, padding_equal, parse_name)
 from ..normalize.model import Detection
+from ..normalize.x509 import dn_similarity, same_instant
 from .matcher import Pair, _version_equal, family_compat
 
 ALGORITHM_ATTRIBUTES = ("primitive", "parameterSetIdentifier", "mode", "padding", "curve", "cryptoFunctions", "oid",
@@ -61,10 +62,6 @@ def _jaccard(a: list, b: list) -> float:
 
 def _suite_norm(s: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", str(s).upper())
-
-
-def _dn_norm(s: Optional[str]) -> str:
-    return re.sub(r"\s+", "", (s or "")).lower()
 
 
 def _alg_ref_correct(reported: Optional[str], reported_props: Optional[dict], gt: GroundTruth,
@@ -189,15 +186,17 @@ def compare_certificate(gt: GroundTruth, asset: GTAsset, det: Detection, pair: P
     for name in ("subjectName", "issuerName"):
         if p.get(name) and not str(p[name]).startswith("runtime:"):
             got = attrs.get(name)
-            out[name] = AttrOutcome(name, p[name], got, 1.0 if _dn_norm(got) == _dn_norm(p[name]) else 0.0)
+            # order- and spelling-insensitive; a common name alone earns its share of the DN's attributes
+            out[name] = AttrOutcome(name, p[name], got, dn_similarity(got, p[name]) if got else 0.0)
     for name in ("notValidBefore", "notValidAfter"):
         if p.get(name) and not str(p[name]).startswith("runtime:"):
             got = attrs.get(name)
-            out[name] = AttrOutcome(name, p[name], got, 1.0 if got and str(got).strip() == str(p[name]).strip() else 0.0)
+            out[name] = AttrOutcome(name, p[name], got, 1.0 if got and same_instant(got, p[name]) else 0.0)
     if p.get("signatureAlgorithmRef"):
         got = attrs.get("signatureAlgorithmRef")
         out["signatureAlgorithmRef"] = AttrOutcome("signatureAlgorithmRef", p["signatureAlgorithmRef"], got,
-                                                   _alg_ref_correct(got, None, gt, p["signatureAlgorithmRef"]))
+                                                   _alg_ref_correct(got, attrs.get("signatureAlgorithmRefProps"), gt,
+                                                                    p["signatureAlgorithmRef"]))
     if p.get("subjectPublicKeyRef"):
         got = attrs.get("subjectPublicKeyRef")
         key = gt.asset_by_id.get(p["subjectPublicKeyRef"])

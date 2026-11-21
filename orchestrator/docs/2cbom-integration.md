@@ -106,7 +106,12 @@ decision rests on.  Keep `undecided` results neutral so the existing order still
 ## 3. Versioning discipline
 
 * The scorecard's `scoringModelVersion` changes when the matching/scoring rules change; 2CBOM should
-  refuse priors with a version it does not expect.
+  refuse priors with a version it does not expect.  Version 1.1 changed matching (artifact cases,
+  certificate identity) but not the ledger rows or the aggregation 2CBOM repeats, so a 2CBOM that
+  reads 1.0 reads 1.1 once it lists the version.
+* Findings in certificate, key, keystore and secret files belong to the `Artifacts` language of the
+  corpus; map their file extensions (`.pem`, `.crt`, `.der`, `.p12`, `.jks`, `.key`, `.env`, `.tf`, …) to it
+  so the reliability measured there applies.
 * Every reconciliation answer carries `toolVersions`.  If the CBOM being merged was produced by a
   different version of a tool than the one benchmarked, 2CBOM can downgrade the confidence or warn —
   the self-reported version in the CBOM's `metadata.tools` is exactly what the orchestrator stores

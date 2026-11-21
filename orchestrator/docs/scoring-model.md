@@ -1,7 +1,11 @@
-# Scoring model (version 1.0)
+# Scoring model (version 1.1)
 
 `SCORING_MODEL_VERSION` in `orchestrator/__init__.py` is bumped whenever any rule below changes, and
 every output carries it, so 2CBOM can refuse priors produced by a model it does not understand.
+Version 1.1 adds the rules for **artifact cases** (certificates, keys, keystores and configuration files,
+whose ground-truth occurrences are marked `fileLevel`) and compares certificates by identity; on the five
+program cases it reproduces version 1.0 except that a certificate detection whose reported subject,
+issuer or validity all belong to another certificate is no longer credited (see the changes at the end).
 
 ## 1. Matching detections to ground-truth assets
 
@@ -12,7 +16,9 @@ Matching is done per asset type.
 1. **Compatibility.** A detection is a candidate for a ground-truth algorithm when their lexicon
    families agree (`aes`, `rsa`, `sha2`, `ml-kem`, …).  The generic family `ec` is compatible with
    `ecdsa`/`ecdh`/`eddsa` at half credit.  An OID equal to the asset's OID makes the detection a
-   candidate regardless of the name.  Detections whose name cannot be parsed fall back to an exact
+   candidate regardless of the name; an OID that several assets of the case share (`rsaEncryption`
+   for every RSA key size, `id-ecPublicKey` for every curve) names the family only, so it does not
+   override a conflicting parameter set.  Detections whose name cannot be parsed fall back to an exact
    (normalised) name/id comparison.
 2. **Identity score.** The asset's *discriminating slots* are its descriptor slots that are not
    null (family, parameter set, mode, padding, curve, hash; `other` values are not discriminating).
@@ -22,10 +28,19 @@ Matching is done per asset type.
    OID match → 1.
 3. **Location.** Reported occurrences hit an asset when the line lies within `line_tolerance`
    (default 1) of one of the asset's occurrence spans in the same file (paths compared by suffix,
-   so mount prefixes such as `/github/workspace/` do not matter).
+   so mount prefixes such as `/github/workspace/` do not matter).  Occurrences the corpus marks
+   `fileLevel` (artifact files: a PEM block, a certificate inside a PKCS#7 or keystore, a
+   configuration line) are also hit by a location that names the file when either side has no line —
+   scanners report certificates and keys by path, and DER files and keystores have no lines.
 4. **Assignment.**
    * *Located* candidates (at least one overlapping occurrence) all receive the detection — a tool
      that emits one `AES` component whose occurrences span the GCM and CBC call sites has found both.
+     When the hits rest on `fileLevel` evidence, only the best-scoring located candidates receive it:
+     one certificate file holds its key algorithm and its signature algorithm, both RSA, and a bare
+     `RSA` there is the key.
+   * A detection that points into an **artifact file** (one with `fileLevel` occurrences or non-asset
+     mentions) where no compatible asset occurs is a false positive, not an imprecise location; it
+     can still be an *implicit* asset (Ed25519's SHA-512), which never has a location.
    * If the detection has locations but none overlap a compatible asset, and a location is a line the
      corpus marks as a **non-asset mention** of the same name (a comment, a string), the detection is a
      **lexical false positive**.
@@ -37,8 +52,11 @@ Match levels: `oid`, `exact` (every slot matched), `partial`, `family` (only the
 
 ### Related crypto material
 
-Candidates must have a compatible material type (`secret-key` = `secret-key`; `key` covers all key
-types at 0.75; `nonce`/`initialization-vector` and `salt`/`seed` are near-synonyms at 0.75/0.5).  The
+Candidates must have a compatible material type (`secret-key` = `secret-key`, `other` = `other` for
+the CSR and CRL objects CycloneDX has no type for; `key` covers all key types at 0.75;
+`nonce`/`initialization-vector` and `salt`/`seed` are near-synonyms at 0.75/0.5).  Secret scanners
+type a finding by the rule that fired (`generic-api-key` → `key`), so `password`, `credential`,
+`token`, `key` and `secret-key` are compatible at 0.2 — but only for a detection located on the asset.  The
 score adds the agreement of the referenced algorithm (resolved through `algorithmRef`, compared slot
 by slot against the ground-truth algorithm the material belongs to) and the size (bits, or bytes×8).
 Location rules are the same as for algorithms; among located candidates only the best-scoring ones
@@ -46,8 +64,13 @@ are kept, which is what separates the X25519 shared secret from the ECDH one on 
 
 ### Certificates, protocols, libraries
 
-Certificates match the (single) certificate asset; protocols match by protocol type with version
-agreement; libraries match by purl (type/namespace/name, version ignored), by purl name, or by
+Certificates match by identity: the type counts 1, and each identifying attribute the tool reports —
+subject, issuer (as distinguished names, order and spelling ignored; a common name alone identifies a
+certificate when it is right), `notValidBefore`, `notValidAfter` (as instants) — counts +1 when it
+agrees and −1 when it does not, over 1 + the number reported.  Attributes a tool leaves out do not
+count, so a bare "certificate here" scores 1.  A detection whose identity score is 0 is not that
+certificate, and among located certificates only the best-scoring ones receive the detection (a chain
+bundle or keystore holds several).  Protocols match by protocol type with version agreement; libraries match by purl (type/namespace/name, version ignored), by purl name, or by
 normalised component name against the corpus library's name/id.
 
 ## 2. Attribute outcomes
@@ -60,7 +83,7 @@ overlapping occurrences) every ground-truth attribute with a value yields `expec
 |---|---|
 | algorithm | `primitive`, `parameterSetIdentifier`, `mode`, `padding`, `curve`, `cryptoFunctions` (Jaccard), `oid`, `classicalSecurityLevel`, `nistQuantumSecurityLevel` |
 | related-crypto-material | `type`, `size`, `algorithmRef` (slot agreement with the referenced ground-truth algorithm) |
-| certificate | `subjectName`, `issuerName`, `signatureAlgorithmRef`, `subjectPublicKeyRef`, `certificateFormat` (+ validity dates when the corpus states literal values) |
+| certificate | `subjectName`, `issuerName` (Jaccard over attribute/value pairs: a CN-only report of a three-attribute DN scores 1/3), `signatureAlgorithmRef` (resolved through the referenced component's name and properties), `subjectPublicKeyRef`, `certificateFormat` (+ validity dates, compared as instants, when the corpus states literal values) |
 | protocol | `type`, `version`, `cipherSuites` (Jaccard) |
 | library | `purl`, `version` |
 | every type | `identity` — pseudo-attribute whose `correct` is the identity score, so 2CBOM can ask about identity conflicts |
@@ -93,7 +116,7 @@ precomputed can be scored exactly from `scorecard.json`.  The precomputed combin
 | `precision` | matched detections / (matched detections + false positives whose reported facets fall in the category) |
 | `completeness` | mean completeness over detected assets |
 | `correctness` | mean correctness over detected assets |
-| `locality` | mean (matched spans / expected spans) over detected, non-implicit, non-library assets |
+| `locality` | mean (matched spans / expected spans) over detected, non-implicit, non-library assets; for artifact cases a span is one place an asset is stored (a PEM block, a keystore entry), so a certificate in four files that a tool reports in two has locality 0.5 |
 | `identity` | mean identity score over detected assets |
 | `score` | Σ wᵢ·metricᵢ with weights `recall 0.35, precision 0.15, completeness 0.15, correctness 0.25, locality 0.10` (renormalised when a metric is undefined) |
 | `scoreShrunk` | score shrunk toward the tool's overall score with prior weight `shrinkage_prior_weight` (5) — use it for tiny categories |
@@ -137,3 +160,14 @@ contested value for that attribute in the category and how often it was right.
 
 All thresholds live under `scoring:` in `orchestrator.yaml` and are copied into the scorecard, so a
 `Scorecard` object reconciles with the parameters the run was scored with.
+
+## Changes
+
+**1.1** — file-level evidence (`fileLevel` occurrences, per-file non-asset mentions, artifact-file false
+positives, best-candidate assignment on file-level hits); certificates matched by identity and their names
+and validity times compared by content; shared OIDs no longer override a parameter conflict; `other` =
+`other` and located mistyped secrets for related crypto material.  Re-scoring the stored outputs of the
+five program cases gives the same ledger as 1.0 for every tool whose certificate detections name the
+corpus certificate or nothing.
+
+**1.0** — initial model.

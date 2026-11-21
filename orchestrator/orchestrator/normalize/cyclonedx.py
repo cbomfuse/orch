@@ -182,6 +182,7 @@ def _certificate_attrs(cp: dict, idx: _RefIndex) -> dict:
         "notValidBefore": _str(cpp.get("notValidBefore")),
         "notValidAfter": _str(cpp.get("notValidAfter")),
         "signatureAlgorithmRef": idx.name(sig) if sig else _str(cpp.get("signatureAlgorithm")),
+        "signatureAlgorithmRefProps": idx.algorithm_props(sig),
         "subjectPublicKeyRef": idx.name(key) if key else _str(cpp.get("subjectPublicKeyAlgorithm")),
         "certificateFormat": _str(cpp.get("certificateFormat")),
         "certificateExtension": _str(cpp.get("certificateExtension") or cpp.get("certificateFileExtension")),

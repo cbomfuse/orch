@@ -14,6 +14,6 @@ The package is organised as a pipeline:
 __version__ = "0.1.0"
 
 # Bump when the ledger/aggregate semantics change (so 2CBOM can refuse stale priors).
-SCORING_MODEL_VERSION = "1.0"
+SCORING_MODEL_VERSION = "1.1"
 # Bump when the scorecard.json layout changes.
 SCORECARD_SCHEMA_VERSION = "1.0"

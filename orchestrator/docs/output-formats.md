@@ -36,7 +36,7 @@ has no configuration for the language), `install-failed`.
 
 ```jsonc
 {
-  "schemaVersion": "1.0", "scoringModelVersion": "1.0", "orchestrator": {"version": "0.1.0"},
+  "schemaVersion": "1.0", "scoringModelVersion": "1.1", "orchestrator": {"version": "0.1.0"},
   "run": {"id": "...", "startedAt": "...", "finishedAt": "...", "host": {...}, "config": {"scoring": {...}}},
   "baseline": {"repo", "ref", "commit", "describe", "evaluatedCommit", "evaluatedDescribe", "evaluatedAt", ...},
   "cases": [{"id", "language", "sourceFile", "stats": {"assets": 90, "byType": {...}, "occurrences": 195, ...}}],
@@ -102,7 +102,7 @@ Same shape as `twocbom/knowledge/tools.json` with an extra `benchmark` block per
 
 ```jsonc
 {
-  "$comment": "...", "version": "orchestrator-<run-id>", "generated": "...", "scoringModelVersion": "1.0",
+  "$comment": "...", "version": "orchestrator-<run-id>", "generated": "...", "scoringModelVersion": "1.1",
   "baseline": {"repo": "...", "commit": "6102ae18…", "ref": "main"},
   "default": {"trust": 50, "detectionMethod": "unknown", "strengths": []},
   "tools": {

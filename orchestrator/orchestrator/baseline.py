@@ -157,6 +157,7 @@ class GTOccurrence:
     library: Optional[str]
     symbol: Optional[str]
     evidence: Optional[str]
+    file_level: bool = False        # evidence is an artifact file: naming the file locates it (``fileLevel``)
 
 
 @dataclass
@@ -203,6 +204,17 @@ class GTAsset:
                 out.append((o.file, o.line, o.end_line or o.line))
         return out
 
+    def spans(self) -> list[tuple]:
+        """Every place the asset occurs as ``(file, start_line, end_line, file_level)``: the line spans of
+        :meth:`locations` plus file-level evidence without lines (binary artifacts such as DER or PKCS#12)."""
+        out = []
+        for o in self.occurrences:
+            if o.file and o.line:
+                out.append((o.file, o.line, o.end_line or o.line, o.file_level))
+            elif o.file and o.file_level:
+                out.append((o.file, None, None, True))
+        return out
+
     def to_dict(self) -> dict:
         return {"id": self.id, "assetType": self.asset_type, "name": self.name, "implicit": self.implicit,
                 "family": self.family, "subtype": self.subtype, "scenarios": self.scenarios,
@@ -230,6 +242,7 @@ class NonAssetMention:
     text: str
     context: str
     reason: str
+    file: Optional[str] = None      # cases with several files name it; otherwise the case's main file
 
 
 def purl_key(purl: Optional[str]) -> Optional[str]:
@@ -277,12 +290,18 @@ class GroundTruth:
                 end_line=_opt_int(end.get("line")), column=_opt_int(start.get("column")),
                 role=str(o.get("role") or ""), kind=str(o.get("kind") or ""), relation="direct",
                 scenario=o.get("scenario") if o.get("scenario") not in (None, "-") else None, scope=o.get("scope"),
-                library=o.get("library"), symbol=o.get("symbol"), evidence=o.get("evidence"))
+                library=o.get("library"), symbol=o.get("symbol"), evidence=o.get("evidence"),
+                file_level=bool(o.get("fileLevel")))
         self.non_asset_mentions: list[NonAssetMention] = [
             NonAssetMention(str(m.get("id")), int(m.get("line") or 0), str(m.get("text") or ""),
-                            str(m.get("context") or ""), str(m.get("reason") or ""))
+                            str(m.get("context") or ""), str(m.get("reason") or ""), m.get("file") or self.file)
             for m in doc.get("nonAssetMentions") or [] if isinstance(m, dict) and m.get("line")
         ]
+        # files whose content is the evidence (certificates, keys, keystores, configuration): a detection that
+        # points into one of them must find a compatible asset there
+        self.artifact_files: set[str] = {o.file for o in self.occurrences.values() if o.file and o.file_level}
+        self.artifact_files |= {m.file for m in self.non_asset_mentions
+                                if m.file and any(o.file_level for o in self.occurrences.values())}
         self.assets: list[GTAsset] = []
         raw_assets = [a for a in doc.get("assets") or [] if isinstance(a, dict) and a.get("id")]
         by_id: dict[str, dict] = {str(a["id"]): a for a in raw_assets}
@@ -306,7 +325,7 @@ class GroundTruth:
 
     def _occ_copy(self, o: GTOccurrence, relation: str) -> GTOccurrence:
         return GTOccurrence(o.id, o.file, o.line, o.end_line, o.column, o.role, o.kind, relation, o.scenario, o.scope,
-                            o.library, o.symbol, o.evidence)
+                            o.library, o.symbol, o.evidence, o.file_level)
 
     def _build_asset(self, a: dict, by_id: dict, algo_family: dict) -> GTAsset:
         kind = str(a.get("kind") or "algorithm")
@@ -364,6 +383,10 @@ class GroundTruth:
         for m in self.non_asset_mentions:
             out.setdefault(m.line, []).append(m)
         return out
+
+    def is_artifact_file(self, reported: Optional[str]) -> bool:
+        """True when a reported path names one of the case's artifact files (see ``artifact_files``)."""
+        return bool(reported) and any(match_file(reported, f) for f in self.artifact_files)
 
     def stats(self) -> dict:
         by_type: dict[str, int] = {}

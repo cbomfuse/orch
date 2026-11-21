@@ -26,6 +26,25 @@
 - Tool specs: `files:` writes config files (placeholders rendered) to `{files}` before each run.
 - The self-reported tool comes from `metadata.component` when `metadata.tools` is empty and the
   component's name is one of the tool's aliases (CBOM-Lens identifies itself that way).
+- Scoring model 1.1, for the baseline's new `Artifacts` case (certificates, keys, keystores, secrets
+  and a TLS configuration as files):
+  - Ground-truth occurrences marked `fileLevel` are hit by a location that names the file, with or
+    without a line; locality counts the places (PEM blocks, keystore entries) an asset is stored.
+  - On file-level hits only the best-scoring candidates receive a detection (a certificate file holds
+    an RSA key and an RSA signature), and a detection that points into an artifact file holding no
+    compatible asset is a false positive unless it is an implicit asset.
+  - Certificates are matched by identity (subject, issuer, validity) instead of "the" certificate;
+    subject and issuer names are compared order- and spelling-insensitively (a common name alone
+    earns its share of the name's attributes), validity times as instants
+    (`orchestrator.normalize.x509`).
+  - An OID several assets share (`rsaEncryption`, `id-ecPublicKey`) no longer overrides a conflicting
+    key size; `other` material matches `other` (CSR, CRL); a secret a scanner mistyped (`key` for a
+    password) counts where it is located.
+  - Non-asset mentions may name their file; the certificate's `signatureAlgorithmRef` is scored with
+    the referenced component's properties.
+  - The oracle declares `Artifacts`; reports show "files" as the program of an artifact case.
+  Re-scoring stored outputs for the five program cases reproduces the 1.0 ledger for every tool
+  whose certificate findings name the corpus certificate or nothing.
 
 ## 0.1.0 — 2026-11-05
 

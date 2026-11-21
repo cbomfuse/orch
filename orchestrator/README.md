@@ -8,7 +8,7 @@ ground truth and turns the results into **versioned, per-category reliability pr
 baseline (ground truth)        tools (newest GitHub release)                  2CBOM
 ┌───────────────────┐   run    ┌──────────┬────────┬────────────────────┐      │
 │ Python Java Go TS │ ───────▶ │ CBOMkit  │ cdxgen │ cryptobom-forge    │      │  "A says AES-128-GCM,
-│ C#  …any new case │          ├──────────┴────┬───┴────────┬───────────┤      │   B says AES-256-GCM
+│ C#  Artifacts  …  │          ├──────────┴────┬───┴────────┬───────────┤      │   B says AES-256-GCM
 └───────────────────┘          │ CBOMkit-theia │ CryptoScan │ CBOM-Lens │      │   — whom do I trust?"
                                └───────────────┴────────────┴───────────┘      │
                         normalise → match → score per category                 │
@@ -30,6 +30,8 @@ baseline (ground truth)        tools (newest GitHub release)                  2C
    **matches** it to the ground truth by OID, canonical descriptor (family, parameter set, mode,
    padding, curve, hash) and source location — with partial credit (`AES` for `AES-256-GCM`) and
    lexical false positives (a comment that says "HMAC") identified from the corpus' non-asset mentions.
+   Certificates, keys, keystores and configuration files (the corpus' `Artifacts` case) are located by
+   file, and certificates are told apart by subject, issuer and validity.
 5. **Scores every (tool, category)**: recall, precision, completeness (did it report the attribute),
    correctness (was it right), locality (did it point at the right lines), composite score, and
    per-attribute statistics — for categories such as language, asset type, primitive, family,

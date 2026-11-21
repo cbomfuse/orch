@@ -141,3 +141,7 @@ queries; `orchestrator tools show <tool>` prints the effective spec.
   `timeout_seconds` (300).  `logs/cbom-lens/<case>.log` has the `scan have failed` line and its reason.
 * **A language directory is missing from the run** — `baseline.include_cases`/`exclude_cases`, or
   the directory has no `ground-truth.json`.
+* **cdxgen, CBOMkit and cryptobom-forge are `unsupported` on `Artifacts`** — that case holds
+  certificates, keys, keystores and configuration files, not a program; only tools whose `languages`
+  include `"*"` (cbomkit-theia, CryptoScan, CBOM-Lens) or `Artifacts` scan it.  Run it alone with
+  `--case Artifacts`.

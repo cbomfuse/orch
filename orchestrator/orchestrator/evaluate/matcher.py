@@ -8,6 +8,12 @@ assigned to the single most similar asset.  Every pair records an *identity scor
 (matched slots minus conflicting slots over the asset's discriminating slots) so that a tool that
 reports ``AES`` where the truth is ``AES-256-GCM`` is credited with a partial detection rather than
 a miss plus a false positive.
+
+Artifact cases (certificates, keys, keystores, configuration files) mark their occurrences
+``fileLevel``: there a reported location that names the file is a hit even without a line, a file
+holds several assets of one family, so only the best-scoring located candidates receive the
+detection, and a detection pointing into an artifact file that holds no compatible asset is a false
+positive rather than an imprecise location.
 """
 from __future__ import annotations
 
@@ -18,8 +24,11 @@ from typing import Optional
 from ..baseline import GTAsset, GroundTruth, match_file, purl_key
 from ..normalize.lexicon import EC_FAMILIES, hash_equal, padding_equal, param_equal, parse_name
 from ..normalize.model import Detection
+from ..normalize.x509 import dn_identifies, same_instant
 
 MATERIAL_KEY_TYPES = {"private-key", "public-key", "secret-key", "key"}
+# what a secret scanner calls a finding depends on the rule that fired ("generic-api-key" -> key), not on the value
+SECRET_TYPES = {"password", "credential", "token", "key", "secret-key"}
 
 
 @dataclass
@@ -59,27 +68,70 @@ class MatchResult:
 
 
 # ----------------------------------------------------------------------------- locations
-def overlap_count(det: Detection, asset: GTAsset, tolerance: int) -> int:
-    spans = asset.locations()
+def overlap_detail(det: Detection, asset: GTAsset, tolerance: int) -> tuple[int, bool]:
+    """(detection occurrences that hit one of the asset's spans, whether any hit was on a source line).
+
+    A line hits a span within ``tolerance`` lines in the same file.  A span of file-level evidence is also
+    hit by a location that names its file when either side has no line (tools report certificates and
+    keys by path only; DER and keystores have no lines)."""
+    spans = asset.spans()
     if not spans:
-        return 0
+        return 0, False
     n = 0
+    precise = False
     for occ in det.occurrences:
-        if occ.line is None:
+        if occ.line is None and not occ.file:
             continue
         lo = occ.line
         hi = occ.end_line or occ.line
-        for f, s, e in spans:
+        hit = False
+        for f, s, e, file_level in spans:
             if occ.file and not match_file(occ.file, f):
                 continue
-            if lo <= e + tolerance and hi >= s - tolerance:
-                n += 1
-                break
-    return n
+            if lo is not None and s is not None:
+                if lo <= e + tolerance and hi >= s - tolerance:
+                    hit = True
+                    if not file_level:
+                        precise = True       # a source line; a PEM block holds a certificate and its algorithms
+                        break
+            elif file_level and occ.file:
+                hit = True
+        if hit:
+            n += 1
+    return n, precise
+
+
+def overlap_count(det: Detection, asset: GTAsset, tolerance: int) -> int:
+    return overlap_detail(det, asset, tolerance)[0]
 
 
 def has_locations(det: Detection) -> bool:
-    return any(o.line is not None for o in det.occurrences)
+    return any(o.line is not None or o.file for o in det.occurrences)
+
+
+def in_artifact_file(det: Detection, gt: GroundTruth) -> bool:
+    """The detection points into a file whose content is the evidence (artifact cases only)."""
+    return bool(gt.artifact_files) and any(o.file and gt.is_artifact_file(o.file) for o in det.occurrences)
+
+
+def _keep_located(located: list, score_of, precise_of) -> list:
+    """Line-precise hits all receive the detection (one component may span several call sites); among hits
+    that rest on file-level evidence only the best-scoring candidates do, because one artifact file holds
+    many assets of the same family (a certificate's key and signature algorithms are both RSA)."""
+    precise = [l for l in located if precise_of(l)]
+    by_file = [l for l in located if not precise_of(l)]
+    if by_file:
+        top = max(score_of(l) for l in by_file)
+        precise += [l for l in by_file if score_of(l) >= top - 1e-9]
+    return precise
+
+
+def _fallback(cands: list, det: Detection, gt: GroundTruth, implicit_of) -> list:
+    """Candidates for an unlocated assignment.  A detection located in an artifact file that holds no
+    compatible asset is wrong there; it can still be an asset that never has a location (implicit)."""
+    if has_locations(det) and in_artifact_file(det, gt):
+        return [c for c in cands if implicit_of(c)]
+    return cands
 
 
 # ----------------------------------------------------------------------------- lexical false positives
@@ -93,9 +145,10 @@ def is_lexical(det: Detection, gt: GroundTruth) -> bool:
     for occ in det.occurrences:
         if occ.line is None or occ.line not in mentions:
             continue
-        if occ.file and gt.file and not match_file(occ.file, gt.file):
-            continue
         for m in mentions[occ.line]:
+            where = m.file or gt.file
+            if occ.file and where and not match_file(occ.file, where):
+                continue
             mt = _norm_name(m.text)
             if mt and dn and (mt in dn or dn in mt):
                 return True
@@ -185,11 +238,17 @@ def match_algorithms(gt: GroundTruth, detections: list, tolerance: int) -> tuple
         for a in assets:
             score, verdict = slot_compare(det, a)
             is_oid = a in oid_hits
-            if is_oid:
+            if is_oid and len(oid_hits) == 1:
                 # the OID identifies the asset even if the name parses differently
                 score = max(score if score is not None else 0.0, 1.0)
                 verdict = verdict or {"family": "match"}
                 verdict = {**verdict, "oid": "match"}
+            elif is_oid:
+                # an OID several assets share (rsaEncryption for every RSA key size) names the family only
+                if score is None:
+                    score, verdict = 1.0 / max(1, len(a.identity_slots)), {"family": "match"}
+                verdict = {**verdict, "oid": "match"}
+                is_oid = False
             if score is None:
                 # last resort: the plain name equals the ground-truth name or id
                 if det.descriptor is None or det.descriptor.family is None:
@@ -204,15 +263,19 @@ def match_algorithms(gt: GroundTruth, detections: list, tolerance: int) -> tuple
         located = []
         if has_locations(det):
             for a, score, verdict, is_oid in cands:
-                ov = overlap_count(det, a, tolerance)
+                ov, precise = overlap_detail(det, a, tolerance)
                 if ov > 0:
-                    located.append((a, score, verdict, is_oid, ov))
+                    located.append((a, score, verdict, is_oid, ov, precise))
         if located:
-            for a, score, verdict, is_oid, ov in located:
+            for a, score, verdict, is_oid, ov, _ in _keep_located(located, lambda l: l[1], lambda l: l[5]):
                 pairs.append(Pair(det, a, score, verdict, ov, True, _level(score, verdict, is_oid)))
             continue
         if has_locations(det) and is_lexical(det, gt):
             # located on a comment/string the corpus marks as a non-asset mention: a false positive
+            unmatched.append(det)
+            continue
+        cands = _fallback(cands, det, gt, lambda c: c[0].implicit)
+        if not cands:
             unmatched.append(det)
             continue
         # no located match: single best candidate by identity, prefer explicit (non-implicit) assets
@@ -267,17 +330,24 @@ def referenced_algorithm_score(desc, gt_asset: Optional[GTAsset]) -> tuple[Optio
 def material_compat(det: Detection, asset: GTAsset) -> Optional[float]:
     t = det.attrs.get("type")
     g = asset.subtype
+    if t is not None and t == g:
+        return 1.0                     # includes "other" for objects CycloneDX has no type for (CSR, CRL)
     if t is None or t in ("unknown", "other"):
         return 0.25 if g else None
-    if t == g:
-        return 1.0
     if t == "key" and g in MATERIAL_KEY_TYPES:
         return 0.75
     if {t, g} <= {"nonce", "initialization-vector"}:
         return 0.75
     if {t, g} <= {"salt", "seed"} or {t, g} <= {"password", "credential"}:
         return 0.5
+    if t in SECRET_TYPES and g in SECRET_TYPES:
+        return SECRET_MISTYPED         # a secret, mistyped ("key" for a password found by a generic rule)
     return None
+
+
+# Compatibility of a mistyped secret.  It only counts where the detection is located on the asset: an
+# unlocated "token" is not evidence for a password somewhere else.
+SECRET_MISTYPED = 0.2
 
 
 def match_materials(gt: GroundTruth, detections: list, tolerance: int) -> tuple[list, list]:
@@ -289,7 +359,7 @@ def match_materials(gt: GroundTruth, detections: list, tolerance: int) -> tuple[
         cands = []
         for a in assets:
             tc = material_compat(det, a)
-            if tc is None:
+            if tc is None or (tc == SECRET_MISTYPED and not overlap_count(det, a, tolerance)):
                 continue
             verdict = {"type": "match" if tc == 1.0 else ("generic" if tc >= 0.5 else "missing")}
             score = tc
@@ -336,6 +406,10 @@ def match_materials(gt: GroundTruth, detections: list, tolerance: int) -> tuple[
                     pairs.append(Pair(det, a, score, verdict, ov, True,
                                       "exact" if score >= 0.999 else "partial"))
             continue
+        cands = _fallback(cands, det, gt, lambda c: c[0].implicit)
+        if not cands:
+            unmatched.append(det)
+            continue
         ranked = sorted(cands, key=lambda c: c[1], reverse=True)
         best = ranked[0]
         if best[1] <= 0.0:
@@ -347,6 +421,36 @@ def match_materials(gt: GroundTruth, detections: list, tolerance: int) -> tuple[
 
 
 # ----------------------------------------------------------------------------- certificates / protocols
+def certificate_identity(det: Detection, asset: GTAsset) -> tuple[float, dict]:
+    """Identity of a certificate detection: the type (1) plus every identifying attribute it reports
+    (subject, issuer, validity) as +1 match / -1 conflict, over 1 + the number reported.  Attributes the
+    tool leaves out do not count, so a bare "certificate here" keeps 1.0 and a single-certificate case
+    scores as before; a CN-only subject identifies the certificate when the CN is right."""
+    p = asset.props
+    verdict = {"type": "match"}
+    score, n = 1.0, 1
+    for slot in ("subjectName", "issuerName"):
+        expected = p.get(slot)
+        if not expected or str(expected).startswith("runtime:"):
+            continue
+        ok = dn_identifies(det.attrs.get(slot), expected)
+        if ok is None:
+            continue
+        n += 1
+        score += 1 if ok else -1
+        verdict[slot] = "match" if ok else "conflict"
+    for slot in ("notValidBefore", "notValidAfter"):
+        expected = p.get(slot)
+        got = det.attrs.get(slot)
+        if not expected or str(expected).startswith("runtime:") or not got:
+            continue
+        n += 1
+        ok = same_instant(got, expected)
+        score += 1 if ok else -1
+        verdict[slot] = "match" if ok else "conflict"
+    return max(0.0, score / n), verdict
+
+
 def match_simple(gt: GroundTruth, detections: list, asset_type: str, tolerance: int) -> tuple[list, list]:
     assets = gt.assets_of_type(asset_type)
     pairs: list[Pair] = []
@@ -354,7 +458,11 @@ def match_simple(gt: GroundTruth, detections: list, asset_type: str, tolerance: 
     for det in detections:
         cands = []
         for a in assets:
-            if asset_type == "protocol":
+            if asset_type == "certificate":
+                score, verdict = certificate_identity(det, a)
+                if score <= 0.0:
+                    continue          # every identifying attribute it reports belongs to another certificate
+            elif asset_type == "protocol":
                 t = det.attrs.get("type")
                 if t and a.subtype and t != a.subtype:
                     continue
@@ -377,14 +485,26 @@ def match_simple(gt: GroundTruth, detections: list, asset_type: str, tolerance: 
         if not cands:
             unmatched.append(det)
             continue
-        located = [(a, s, v, overlap_count(det, a, tolerance)) for a, s, v in cands]
+        located = [(a, s, v) + overlap_detail(det, a, tolerance) for a, s, v in cands]
         located = [l for l in located if l[3] > 0] if has_locations(det) else []
         if located:
-            for a, s, v, ov in located:
+            if asset_type == "certificate":
+                # one component is one certificate: a bundle or keystore file holds several
+                top = max(l[1] for l in located)
+                located = [l for l in located if l[1] >= top - 1e-9]
+            else:
+                located = _keep_located(located, lambda l: l[1], lambda l: l[4])
+            for a, s, v, ov, _ in located:
                 pairs.append(Pair(det, a, s, v, ov, True, "exact" if s >= 0.999 else "partial"))
             continue
+        cands = _fallback(cands, det, gt, lambda c: c[0].implicit)
+        if not cands:
+            unmatched.append(det)
+            continue
         a, s, v = max(cands, key=lambda c: c[1])
-        pairs.append(Pair(det, a, s, v, 0, False, "exact" if s >= 0.999 else "partial", len(cands) > 1))
+        ambiguous = len(cands) > 1 if asset_type != "certificate" else \
+            sum(1 for c in cands if abs(c[1] - s) < 1e-9) > 1
+        pairs.append(Pair(det, a, s, v, 0, False, "exact" if s >= 0.999 else "partial", ambiguous))
     return pairs, unmatched
 
 
